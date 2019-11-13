@@ -1,7 +1,7 @@
-﻿<Application x:Class="Engineer_s_Thesis.App"
+﻿<Application x:Class="EngineersThesis.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Engineer_s_Thesis"
+             xmlns:local="clr-namespace:EngineersThesis"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

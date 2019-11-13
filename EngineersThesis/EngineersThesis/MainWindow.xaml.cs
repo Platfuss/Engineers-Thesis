@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Engineer_s_Thesis
+namespace EngineersThesis
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -23,6 +23,15 @@ namespace Engineer_s_Thesis
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var loginScreen = new LoginScreen()
+            {
+                Owner = this
+            };
+            loginScreen.ShowDialog();
         }
     }
 }

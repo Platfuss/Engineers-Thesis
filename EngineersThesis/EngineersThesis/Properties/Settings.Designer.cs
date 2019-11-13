@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Engineer_s_Thesis.Properties
+namespace EngineersThesis.Properties
 {
 
 
