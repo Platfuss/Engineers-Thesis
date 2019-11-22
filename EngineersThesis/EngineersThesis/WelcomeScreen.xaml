@@ -1,0 +1,56 @@
+﻿<Window x:Class="EngineersThesis.WelcomeScreen"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EngineersThesis"
+        mc:Ignorable="d"
+        Title="Ekran logowania" Height="300" Width="400" WindowStartupLocation="CenterOwner" ResizeMode="CanMinimize" KeyDown="Window_KeyDown">
+    <Grid>
+        <Grid x:Name="mainGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="Adres serwera" HorizontalAlignment="Left" VerticalAlignment="Center" Width="122" VerticalContentAlignment="Center" Height="26"/>
+            <Label Content="Nazwa użytkownika" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" VerticalContentAlignment="Center" Height="26" Width="114" />
+            <Label Content="Hasło" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" VerticalContentAlignment="Center" Height="26" Width="40"/>
+            <TextBox x:Name="upperTextBox" HorizontalAlignment="Center" Height="22" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" Grid.Column="1" Grid.Row="0"/>
+            <TextBox x:Name="centerTextBox" HorizontalAlignment="Center" Height="24" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" Grid.Column="1" Grid.Row="1"/>
+            <PasswordBox x:Name="lowerTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="120" PasswordChar="*" Grid.Column="1" Grid.Row="2" Height="24" />
+            <Button Content="Zaloguj" HorizontalAlignment="Center" Width="75" Click="Button_Click_1" Grid.Column="0" Grid.Row="4" Height="20" VerticalContentAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10"/>
+            <Button Content="Anuluj" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="75" Click="Button_Click" Grid.Column="1" Grid.Row="4" Height="20" Margin="0,0,0,10"/>
+            <ComboBox x:Name="databaseSelection" Visibility="Hidden" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Width="190" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+            <Label x:Name="databaseSelectionLabel"  Visibility="Hidden" Content="Wybierz bazę" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="3" VerticalContentAlignment="Center" Height="26" Width="87"/>
+            <Button x:Name="databasePickButton" Visibility="Hidden" Grid.ColumnSpan="2" Content="Wybierz" HorizontalAlignment="Center" Margin="0,0,0,10" Grid.Row="4" Grid.Column="0" VerticalAlignment="Bottom" Width="75" Click="DatabasePickButton_Click"/>
+            <Button x:Name="newDatabaseButton" Visibility="Hidden" Content="Dodaj bazę" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Top" Width="75" Click="AddNewBase"/>
+        </Grid>
+        
+        <Grid x:Name="newDatabaseGrid" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="Nazwa bazy" HorizontalAlignment="Left" VerticalAlignment="Center" Width="122" VerticalContentAlignment="Center" Height="26"/>
+            <TextBox x:Name="newBaseTextBox" HorizontalAlignment="Center" Height="22" TextWrapping="Wrap" VerticalAlignment="Center" Width="170" Grid.Column="1" Grid.Row="0"/>
+            <Button Content="Dodaj bazę" Width="75" Height="20" Grid.Column="0" Grid.Row="2" Margin="0,0,0,10" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Bottom" Click="ConfirmNewBase"/>
+            <Button Content="Anuluj" Width="75" Height="20" Grid.Column="1" Grid.Row="2" VerticalAlignment="Bottom" Margin="0,0,0,10" HorizontalAlignment="Center" Click="DontAddNewBase"/>
+
+        </Grid>
+    </Grid>
+</Window>

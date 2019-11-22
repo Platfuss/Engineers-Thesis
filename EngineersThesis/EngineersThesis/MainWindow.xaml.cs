@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using EngineersThesis.General;
 
 namespace EngineersThesis
 {
@@ -20,6 +21,9 @@ namespace EngineersThesis
     /// </summary>
     public partial class MainWindow : Window
     {
+        private WelcomeScreen welcomeScreen;
+        private SqlHandler sqlHandler;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -27,11 +31,25 @@ namespace EngineersThesis
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var loginScreen = new LoginScreen()
+            welcomeScreen.ShowDialog();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            welcomeScreen = new WelcomeScreen()
             {
                 Owner = this
             };
-            loginScreen.ShowDialog();
+            welcomeScreen.ShowDialog();
+            sqlHandler = welcomeScreen.SqlHandler;
+            sqlHandler.PrepareDatabase();
+            var sth = sqlHandler.ExecuteCommand("Select * from `new_schema`.`units`;");
+            dataGrid.ItemsSource = sth.Tables[0].DefaultView;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            welcomeScreen.Close();
         }
     }
 }

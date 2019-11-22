@@ -5,8 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EngineersThesis"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="800" WindowState="Maximized">
+        Title="MainWindow" Height="550" Width="800" WindowState="Maximized" Closing="Window_Closing" Loaded="Window_Loaded">
     <Grid>
-        <Button Content="Otwórz okno" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Click="Button_Click"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="50*"/>
+        </Grid.RowDefinitions>
+        
+        <Button Content="Otwórz okno" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Click="Button_Click" Grid.Row="0"/>
+        <DataGrid x:Name="dataGrid" Grid.Row="2" ColumnWidth="Auto" Background="Gray" CanUserAddRows="False" IsReadOnly="True" CanUserDeleteRows="False"/>
     </Grid>
 </Window>
