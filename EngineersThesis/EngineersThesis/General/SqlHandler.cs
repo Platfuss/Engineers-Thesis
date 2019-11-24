@@ -34,7 +34,14 @@ namespace EngineersThesis.General
             {
                 var dataAdapter = new MySqlDataAdapter(command, connection);
                 dataSet = new DataSet();
-                dataAdapter.Fill(dataSet);
+                try
+                {
+                    dataAdapter.Fill(dataSet);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
                 Disconnect();
             }
             return dataSet;
@@ -75,12 +82,12 @@ namespace EngineersThesis.General
         {
             if (Database != null && Database != "")
             {
-                ExecuteCommand(SqlConstants.CreateUnitTableCommand(Database));
-                ExecuteCommand(SqlConstants.CreateWarehousesTableCommand(Database));
-                ExecuteCommand(SqlConstants.CreateConstractorsTableCommand(Database));
-                ExecuteCommand(SqlConstants.CreateProductsTableCommand(Database));
-                ExecuteCommand(SqlConstants.CreateOrdersTableCommand(Database));
-                ExecuteCommand(SqlConstants.CreateOrderDetailsTableCommand(Database));
+                ExecuteCommand(SqlCommands.AllowDiactricMarksCommand(Database));
+                ExecuteCommand(SqlCommands.WarehousesTableCommand(Database));
+                ExecuteCommand(SqlCommands.ConstractorsTableCommand(Database));
+                ExecuteCommand(SqlCommands.ProductsTableCommand(Database));
+                ExecuteCommand(SqlCommands.OrdersTableCommand(Database));
+                ExecuteCommand(SqlCommands.OrderDetailsTableCommand(Database));
             }
         }
 

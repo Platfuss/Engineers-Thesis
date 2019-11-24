@@ -5,15 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EngineersThesis"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="800" WindowState="Maximized" Closing="Window_Closing" Loaded="Window_Loaded">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="5*"/>
-            <RowDefinition Height="3*"/>
-            <RowDefinition Height="50*"/>
-        </Grid.RowDefinitions>
-        
-        <Button Content="Otwórz okno" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Click="Button_Click" Grid.Row="0"/>
-        <DataGrid x:Name="dataGrid" Grid.Row="2" ColumnWidth="Auto" Background="Gray" CanUserAddRows="False" IsReadOnly="True" CanUserDeleteRows="False"/>
-    </Grid>
+        Title="MainWindow" Height="746.5" Width="885.5" WindowState="Maximized" Closing="Window_Closing" Loaded="Window_Loaded">
+    <TabControl>
+        <TabItem Header="Towary">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="3*"/>
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0" Margin="10,0,10,0" LastChildFill="False">
+                    <Button x:Name="AddNewProductButton" IsEnabled="False" Content="Dodaj produkt" Click="AddNewProduct"/>
+                    <Border BorderThickness="2"/>
+                    <Button Content="Wybór bazy" Width="75" Click="ChooseDatabase" DockPanel.Dock="Right"/>
+                    <Border BorderThickness="2" DockPanel.Dock="Right"/>
+                    <Button x:Name="OpenWarehousesManagerButton" Content="Zarządzaj magazynami" DockPanel.Dock="Right" Click="OpenWarehousesManager" IsEnabled="False"/>
+                </DockPanel>
+
+                <Canvas Background="Gray" Grid.Row="1" Margin="10,0,10,0">
+                    <DataGrid x:Name="dataGrid" ColumnWidth="Auto" Background="Gray" CanUserAddRows="False" IsReadOnly="True" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserDeleteRows="False" AlternatingRowBackground="#FFCBCBCB" HorizontalAlignment="Left" SelectionMode="Single"/>
+                </Canvas>
+            </Grid>
+        </TabItem>
+
+        <TabItem Header="Dokumenty" >
+
+        </TabItem>
+    </TabControl>
 </Window>

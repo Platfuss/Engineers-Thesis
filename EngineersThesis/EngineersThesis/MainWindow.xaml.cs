@@ -29,9 +29,12 @@ namespace EngineersThesis
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ChooseDatabase(object sender, RoutedEventArgs e)
         {
             welcomeScreen.ShowDialog();
+            sqlHandler = welcomeScreen.SqlHandler;
+            sqlHandler.PrepareDatabase();
+            SetDataGrid();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -40,16 +43,52 @@ namespace EngineersThesis
             {
                 Owner = this
             };
-            welcomeScreen.ShowDialog();
-            sqlHandler = welcomeScreen.SqlHandler;
-            sqlHandler.PrepareDatabase();
-            var sth = sqlHandler.ExecuteCommand("Select * from `new_schema`.`units`;");
-            dataGrid.ItemsSource = sth.Tables[0].DefaultView;
+            ChooseDatabase(new object(), new RoutedEventArgs());
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             welcomeScreen.Close();
+        }
+
+        private void SetDataGrid()
+        {
+            var database = sqlHandler.Database;
+            if (database != null)
+            {
+                AddNewProductButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled = true;
+               
+                var dataSet = sqlHandler.ExecuteCommand(SqlCommands.ShowProductsCommand(sqlHandler.Database));
+                dataGrid.ItemsSource = dataSet.Tables[0].DefaultView;
+                foreach (var column in dataGrid.Columns)
+                {
+                    column.MinWidth = 100;
+                    if (SqlConstants.translations.TryGetValue(column.Header.ToString(), out String result))
+                        column.Header = result;
+                }
+            }
+            else
+            {
+                AddNewProductButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled = false;
+            }
+        }
+
+        private void AddNewProduct(object sender, RoutedEventArgs e)
+        {
+            var productEdition = new ProductEdition(sqlHandler)
+            {
+                Owner = this
+            };
+            productEdition.ShowDialog();
+        }
+
+        private void OpenWarehousesManager(object sender, RoutedEventArgs e)
+        {
+            var warehousesManager = new WarehousesManager(sqlHandler)
+            {
+                Owner = this
+            };
+            warehousesManager.ShowDialog();
         }
     }
 }

@@ -44,13 +44,20 @@ namespace EngineersThesis
         {
             if (e.Key == Key.Enter)
             {
-                if (Convert.ToBoolean(databaseSelection.Visibility) == Convert.ToBoolean(Visibility.Hidden))
+                if (mainGrid.Visibility == Visibility.Visible)
                 {
-                    Button_Click_1(new object(), new RoutedEventArgs());
+                    if (Convert.ToBoolean(databaseSelection.Visibility) == Convert.ToBoolean(Visibility.Hidden))
+                    {
+                        Button_Click_1(new object(), new RoutedEventArgs());
+                    }
+                    else
+                    {
+                        DatabasePickButton_Click(new object(), new RoutedEventArgs());
+                    }
                 }
                 else
                 {
-                    DatabasePickButton_Click(new object(), new RoutedEventArgs());
+                    ConfirmNewBase(new object(), new RoutedEventArgs());
                 }
             }
         }
@@ -82,7 +89,8 @@ namespace EngineersThesis
                 }
                 else
                 {
-                    System.Windows.Forms.MessageBox.Show("Brak poprawnych baz danych", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    System.Windows.Forms.MessageBox.Show("Brak poprawnych baz danych. Dodaj nową.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AddNewBase(new object(), new RoutedEventArgs());
                 }
             }
         }
@@ -104,10 +112,10 @@ namespace EngineersThesis
         {
             if (newBaseTextBox.Text != "")
             {
-                var names = SqlHandler.DataSetToList(SqlHandler.ExecuteCommand(SqlConstants.CreateIfDatabaseAlreadyExistCommand(newBaseTextBox.Text)));
+                var names = SqlHandler.DataSetToList(SqlHandler.ExecuteCommand(SqlCommands.IfDatabaseAlreadyExistCommand(newBaseTextBox.Text)));
                 if (names.Count == 0)
                 {
-                    SqlHandler.ExecuteCommand(SqlConstants.CreateNewDatabaseCommand(newBaseTextBox.Text));
+                    SqlHandler.ExecuteCommand(SqlCommands.NewDatabaseCommand(newBaseTextBox.Text));
                     newDatabaseGrid.Visibility = Visibility.Hidden;
                     mainGrid.Visibility = Visibility.Visible;
                     Button_Click_1(new object(), new RoutedEventArgs());
