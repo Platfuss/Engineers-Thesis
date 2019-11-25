@@ -38,7 +38,7 @@ namespace EngineersThesis
         private void SetDataGrid()
         {
             var database = sqlHandler.Database;
-            var dataSet = sqlHandler.ExecuteCommand(SqlCommands.ShowWarehousesCommand(sqlHandler.Database));
+            var dataSet = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehouses(sqlHandler.Database));
             dataGrid.ItemsSource = dataSet.Tables[0].DefaultView;
         }
 
@@ -75,7 +75,7 @@ namespace EngineersThesis
                 == MessageBoxResult.Yes)
             {
                 var rowData = (DataRowView)dataGrid.SelectedItems[0];
-                sqlHandler.ExecuteCommand(SqlCommands.DeleteFromWarehouses(sqlHandler.Database, (String)rowData[0], (String)rowData[1]));
+                sqlHandler.ExecuteCommand(SqlDeleteCommands.DeleteFromWarehouses(sqlHandler.Database, (String)rowData[0], (String)rowData[1]));
                 confirmChoiceButton.IsEnabled = editWarehouseButton.IsEnabled = deleteWarehouseButton.IsEnabled = false;
                 SetDataGrid();
             }
@@ -87,12 +87,12 @@ namespace EngineersThesis
             {
                 if (editMode)
                 {
-                    sqlHandler.ExecuteCommand(SqlCommands.UpdateWarehouse(sqlHandler.Database,
+                    sqlHandler.ExecuteCommand(SqlUpdateCommands.UpdateWarehouse(sqlHandler.Database,
                         Shortcut, WarehouseName, centerTextBox.Text, upperTextBox.Text));
                 }
                 else
                 {
-                    sqlHandler.ExecuteCommand(SqlCommands.InsertNewWarehouse(sqlHandler.Database, centerTextBox.Text, upperTextBox.Text));
+                    sqlHandler.ExecuteCommand(SqlInsertCommands.InsertNewWarehouse(sqlHandler.Database, centerTextBox.Text, upperTextBox.Text));
                 }
                 ClickExit(new object(), new RoutedEventArgs());
             }
@@ -123,7 +123,7 @@ namespace EngineersThesis
 
         private void OnTextBoxChange(object sender, TextChangedEventArgs e)
         {
-            if (upperTextBox.Text != null && centerTextBox.Text != null)
+            if (upperTextBox.Text != "" && centerTextBox.Text != "")
                 confirmEditingButton.IsEnabled = true;
             else
                 confirmEditingButton.IsEnabled = false;

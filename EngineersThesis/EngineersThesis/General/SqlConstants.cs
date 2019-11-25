@@ -27,6 +27,7 @@ namespace EngineersThesis.General
             {"short", "Skrót"},
             {"class", "Grupa"},
             {"price", "Cena"},
+            {"tax", "VAT"},
         };
     }
 }

@@ -83,11 +83,12 @@ namespace EngineersThesis.General
             if (Database != null && Database != "")
             {
                 ExecuteCommand(SqlCommands.AllowDiactricMarksCommand(Database));
-                ExecuteCommand(SqlCommands.WarehousesTableCommand(Database));
-                ExecuteCommand(SqlCommands.ConstractorsTableCommand(Database));
-                ExecuteCommand(SqlCommands.ProductsTableCommand(Database));
-                ExecuteCommand(SqlCommands.OrdersTableCommand(Database));
-                ExecuteCommand(SqlCommands.OrderDetailsTableCommand(Database));
+                ExecuteCommand(SqlCreateTableCommands.WarehousesTable(Database));
+                ExecuteCommand(SqlCreateTableCommands.ProductsTable(Database));
+                ExecuteCommand(SqlCreateTableCommands.WarehousesProducts(Database));
+                ExecuteCommand(SqlCreateTableCommands.ConstractorsTable(Database));
+                ExecuteCommand(SqlCreateTableCommands.OrdersTable(Database));
+                ExecuteCommand(SqlCreateTableCommands.OrderDetailsTable(Database));
             }
         }
 
