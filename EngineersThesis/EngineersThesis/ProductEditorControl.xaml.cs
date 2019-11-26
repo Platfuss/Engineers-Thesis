@@ -10,46 +10,24 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows.Navigation;
 using System.Text.RegularExpressions;
-using EngineersThesis.General;
+using System.Windows.Shapes;
 
 namespace EngineersThesis
 {
     /// <summary>
-    /// Interaction logic for ProductEdition.xaml
+    /// Interaction logic for ProductEditorControl.xaml
     /// </summary>
-    public partial class ProductEditor : Window
+    public partial class ProductEditorControl : Page
     {
-        private SqlHandler sqlHandler;
-
-        public ProductEditor(SqlHandler handler)
+        public ProductEditorControl()
         {
             InitializeComponent();
-            sqlHandler = handler;
-            editProductFrame.Content = new ProductEditorControl();
-            newProductFrame.Content = new ProductEditorControl();
-        }
-
-        private void SetDataGrid()
-        {
-            var database = sqlHandler.Database;
-            if (database != null)
-            {
-                var dataSet = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProducts(sqlHandler.Database));
-                dataGrid.ItemsSource = dataSet.Tables[0].DefaultView;
-                foreach (var column in dataGrid.Columns)
-                {
-                    column.MinWidth = 100;
-                    if (SqlConstants.translations.TryGetValue(column.Header.ToString(), out String result))
-                        column.Header = result;
-                }
-            }
         }
 
         private void OnWindowLoaded(object sender, RoutedEventArgs e)
         {
-            SetDataGrid();
             //if (editMode)
             //{
             //    upperLeftTextBox.Text = oldName;
@@ -72,11 +50,6 @@ namespace EngineersThesis
             //        }
             //    }
             //}
-        }
-
-        private void OnCancel(object sender, RoutedEventArgs e)
-        {
-            Close();
         }
 
         private void OnNetValidation(object sender, TextCompositionEventArgs e)
@@ -139,11 +112,6 @@ namespace EngineersThesis
             //{
             //    MessageBox.Show("Nie wszystkie pola zostały wypełnione!");
             //}
-        }
-
-        private void OnDataGridSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
         }
     }
 }

@@ -108,13 +108,7 @@ namespace EngineersThesis
 
         private void OnEditProduct(object sender, RoutedEventArgs e)
         {
-            var rowData = (DataRowView)dataGrid.SelectedItems[0];
-            var productEditor = new ProductEditor(sqlHandler, (String)rowData[0], (String)rowData[1], (double)rowData[3], (int)rowData[4])
-            {
-                Owner = this
-            };
-            productEditor.ShowDialog();
-            SetDataGrid();
+
         }
 
         private void OnDataGridSelectionChanged(object sender, SelectionChangedEventArgs e)

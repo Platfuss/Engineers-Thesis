@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EngineersThesis"
         mc:Ignorable="d"
-        Title="MainWindow" Height="746.5" Width="885.5" WindowState="Maximized" Closing="Window_Closing" Loaded="Window_Loaded">
+        Title="MainWindow" WindowState="Maximized" Closing="Window_Closing" Loaded="Window_Loaded">
     <TabControl>
         <TabItem Header="Towary">
             <Grid>
@@ -30,7 +30,7 @@
             </Grid>
         </TabItem>
 
-        <TabItem Header="Dokumenty" >
+        <TabItem Header="Dokumenty">
 
         </TabItem>
     </TabControl>

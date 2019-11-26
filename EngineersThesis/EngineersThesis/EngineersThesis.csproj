@@ -66,6 +66,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ProductEditorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WarehousesManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -92,6 +96,9 @@
     <Compile Include="General\SqlUpdateCommands.cs" />
     <Compile Include="ProductEditor.xaml.cs">
       <DependentUpon>ProductEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProductEditorControl.xaml.cs">
+      <DependentUpon>ProductEditorControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="WarehousesManager.xaml.cs">
       <DependentUpon>WarehousesManager.xaml</DependentUpon>

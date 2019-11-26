@@ -28,6 +28,7 @@ namespace EngineersThesis.General
             {"class", "Grupa"},
             {"price", "Cena"},
             {"tax", "VAT"},
+            {"complex", "Złożony"},
         };
     }
 }
