@@ -17,6 +17,7 @@ namespace EngineersThesis.General
         public String Password { get; set; }
         private MySqlConnection connection;
         private const uint timeout = 3;
+        private const String charset = "utf8";
 
         public SqlHandler() { }
         public SqlHandler (String Server, String Database, String Uid, String Password)
@@ -45,6 +46,25 @@ namespace EngineersThesis.General
                 Disconnect();
             }
             return dataSet;
+        }
+
+        public bool ExecuteNonQuery(String command)
+        {
+            bool result = false;
+            if (Connect())
+            {
+                try
+                {
+                    var mySqlCommand = new MySqlCommand(command, connection);
+                    result = mySqlCommand.ExecuteNonQuery() > 0;
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                Disconnect();
+            }
+            return result;
         }
 
         public List<List<String>> DataSetToList(DataSet dataSet)
@@ -85,6 +105,7 @@ namespace EngineersThesis.General
                 ExecuteCommand(SqlCommands.AllowDiactricMarksCommand(Database));
                 ExecuteCommand(SqlCreateTableCommands.WarehousesTable(Database));
                 ExecuteCommand(SqlCreateTableCommands.ProductsTable(Database));
+                ExecuteCommand(SqlCreateTableCommands.ComplexProductComponentsTable(Database));
                 ExecuteCommand(SqlCreateTableCommands.WarehousesProducts(Database));
                 ExecuteCommand(SqlCreateTableCommands.ConstractorsTable(Database));
                 ExecuteCommand(SqlCreateTableCommands.OrdersTable(Database));
@@ -100,7 +121,8 @@ namespace EngineersThesis.General
                 UserID = Uid,
                 Password = Password,
                 Database = Database,
-                ConnectionTimeout = timeout
+                ConnectionTimeout = timeout,
+                CharacterSet = charset,
             };
 
             connection = new MySqlConnection(builder.ToString());

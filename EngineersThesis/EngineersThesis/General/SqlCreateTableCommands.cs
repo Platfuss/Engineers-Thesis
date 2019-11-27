@@ -23,9 +23,20 @@ namespace EngineersThesis.General
                 $"ID int PRIMARY KEY AUTO_INCREMENT," +
                 $"NAME varchar(255) UNIQUE NOT NULL," +
                 $"UNIT varchar(5) NOT NULL," +
-                $"PRICE double NOT NULL," +
-                $"TAX int default 0," +
-                $"COMPLEX bool default false" +
+                $"PRICE double NOT NULL CHECK(PRICE >= 0)," +
+                $"TAX int default 0 CHECK (AMOUNT >=0)" +
+                $");";
+        }
+
+        public static String ComplexProductComponentsTable(String database)
+        {
+            return $"CREATE TABLE IF NOT EXISTS `{database}`.`components` (" +
+                $"ID_COMPLEX int NOT NULL," +
+                $"ID_COMPONENT int NOT NULL," +
+                $"AMOUNT double NOT NULL," +
+                $"PRIMARY KEY (ID_COMPLEX, ID_COMPONENT)," +
+                $"FOREIGN KEY (ID_COMPLEX) REFERENCES `{database}`.`products`(ID) ON DELETE CASCADE," +
+                $"FOREIGN KEY (ID_COMPONENT) REFERENCES `{database}`.`products`(ID) ON DELETE CASCADE" +
                 $");";
         }
 

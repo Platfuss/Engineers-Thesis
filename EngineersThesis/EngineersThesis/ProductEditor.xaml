@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EngineersThesis"
         mc:Ignorable="d"
-        Title="Okno produktu" Height="400" Width="900" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Loaded="OnWindowLoaded">
+        Title="Okno produktu" Height="400" Width="1100" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Loaded="OnWindowLoaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="315"/>
@@ -22,80 +22,14 @@
         <Label Content="Przegląd produktów" Grid.Column="1" Padding="5,5,5,0" HorizontalAlignment="Center" FontWeight="Medium"/>
         <Label Content="Nowy produkt" Grid.Column="2" Padding="5,5,5,0" HorizontalAlignment="Right" FontWeight="Medium"/>
 
-        <Grid Grid.Column="0" Grid.Row="1" Margin="1, 2, 1, 2" Width="315">
-            <Frame x:Name="editProductFrame"/>
+        <Grid Grid.Column="0" Grid.Row="1" Margin="1, 2, 1, 2" Width="315" >
+            <Frame x:Name="editProductFrame" NavigationUIVisibility="Hidden"/>
         </Grid>
 
         <DataGrid x:Name="dataGrid" Grid.Column="1" Grid.Row="1" Margin="1, 2, 1, 2" ColumnWidth="Auto" Background="Gray" CanUserAddRows="False" IsReadOnly="True" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserDeleteRows="False" AlternatingRowBackground="#FFCBCBCB" HorizontalAlignment="Left" SelectionMode="Single" SelectionChanged="OnDataGridSelectionChanged"/>
 
         <Grid Grid.Column="2" Grid.Row="1" Margin="1, 2, 1, 2">
-            <Frame x:Name="newProductFrame"/>
-            <!--<TabControl>
-                <TabItem Header="Produkt">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <Label Content="Nazwa" HorizontalAlignment="Left" VerticalAlignment="Center" Width="122" VerticalContentAlignment="Center" Height="26"/>
-                        <Label Content="Cena netto" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="3" VerticalContentAlignment="Center" Height="26" Width="114" />
-                        <Label Content="Rodzaj produktu" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="6" VerticalContentAlignment="Center" Height="26" Width="114" />
-                        <TextBox x:Name="upperLeftTextBox" HorizontalAlignment="Right" Height="24" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" Grid.Column="0" Grid.Row="1" Margin="0,0,20,0"/>
-                        <TextBox x:Name="centerLeftTextBox" HorizontalAlignment="Right" Height="24" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" Grid.Column="0" Grid.Row="4" Margin="0,0,20,0" PreviewTextInput="OnNetValidation" TextChanged="OnNetTextChanged"/>
-                        <Grid Grid.Row="7">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <RadioButton x:Name="normalProductRadioButton" Content="Zwykły" HorizontalAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="True" Click="NormalProductChecked" />
-                            <RadioButton x:Name="complexProductRadioButton" Grid.Column="1" Content="Złożony" HorizontalAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center" Click="ComplexProductChecked" />
-                        </Grid>
-                        <Label Content="Jednostka" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="122" VerticalContentAlignment="Center" Height="26"/>
-                        <ComboBox x:Name="unitComboBox" HorizontalAlignment="Right" Height="22" VerticalAlignment="Center" Width="120" Grid.Column="1" Grid.Row="1" Margin="0,0,20,0">
-                            <ComboBoxItem Content="szt."/>
-                            <Separator/>
-                            <ComboBoxItem Content="g"/>
-                            <ComboBoxItem Content="kg"/>
-                            <ComboBoxItem Content="t"/>
-                            <Separator/>
-                            <ComboBoxItem Content="cm"/>
-                            <ComboBoxItem Content="m"/>
-                            <Separator/>
-                            <ComboBoxItem Content="l"/>
-                        </ComboBox>
-
-                        <Label Content="Stawka VAT" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3" VerticalContentAlignment="Center" Height="26" Width="83" Margin="0,0,0,1"/>
-                        <ComboBox x:Name="taxComboBox" HorizontalAlignment="Right" VerticalAlignment="Center" Width="120" Grid.Column="1" Grid.Row="4" Height="24" Margin="0,0,20,0" SelectedIndex="0" SelectionChanged="OnTaxChanged">
-                            <ComboBoxItem Content="23%"/>
-                            <ComboBoxItem Content="8%"/>
-                            <ComboBoxItem Content="5%"/>
-                            <ComboBoxItem Content="0%"/>
-                        </ComboBox>
-
-                        <Label Content="Cena brutto" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="6" VerticalContentAlignment="Center" Height="26" Width="114" />
-                        <TextBox x:Name="lowerRightTextBox" HorizontalAlignment="Right" Height="24" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" Grid.Column="1" Grid.Row="7" Margin="0,0,20,0" IsEnabled="False" IsReadOnly="True"/>
-
-                        <Button Content="Dodaj" HorizontalAlignment="Center" Width="75" Grid.Column="0" Grid.Row="9" Height="20" VerticalContentAlignment="Center" VerticalAlignment="Center" Click="OnAcceptClick"/>
-                    </Grid>
-                </TabItem>
-                
-                <TabItem x:Name="tabComponent" Header="Składniki" IsEnabled="False">
-                    <DataGrid/>
-                </TabItem>
-            </TabControl>-->
+            <Frame x:Name="newProductFrame" NavigationUIVisibility="Hidden"/>
         </Grid>
 
         <Button Content="Zakończ" Width="75" Grid.Column="2" Grid.Row="3" Height="20" Click="OnCancel" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Right" Margin="0,0,20,0" VerticalAlignment="Center"/>

@@ -17,5 +17,16 @@ namespace EngineersThesis.General
         {
             return $"INSERT INTO `{database}`.`products` (NAME, UNIT, PRICE, TAX) VALUES ('{name}', '{unit}', '{price}', '{tax}');";
         }
+
+        public static String InsertComponents(String database, String idComplex, List<Tuple<String, String>> list)
+        {
+            String command = $"INSERT INTO `{database}`.`components` (ID_COMPLEX, ID_COMPONENT, AMOUNT) VALUES ";
+            foreach (var tuple in list)
+            {
+                command += $"({idComplex}, {tuple.Item1}, {tuple.Item2}),";
+            }
+            return command.Remove(command.Length - 1) + ";";
+        }
+        
     }
 }

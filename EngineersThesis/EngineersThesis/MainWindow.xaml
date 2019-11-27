@@ -16,16 +16,15 @@
                 </Grid.RowDefinitions>
 
                 <DockPanel Grid.Row="0" Margin="10,0,10,0" LastChildFill="False">
-                    <Button x:Name="AddNewProductButton" IsEnabled="False" Content="Dodaj produkt" Click="AddNewProduct"/>
+                    <Button x:Name="ManageProductsButton" IsEnabled="False" Content="Zarządzaj produktami" Click="OnManageProductButtonClick"/>
                     <Border BorderThickness="2"/>
-                    <Button x:Name="EditProductButton" IsEnabled="False" Content="Edytuj produkt" Click="OnEditProduct"/>
                     <Button Content="Wybór bazy" Width="75" Click="ChooseDatabase" DockPanel.Dock="Right"/>
                     <Border BorderThickness="2" DockPanel.Dock="Right"/>
                     <Button x:Name="OpenWarehousesManagerButton" Content="Zarządzaj magazynami" DockPanel.Dock="Right" Click="OpenWarehousesManager" IsEnabled="False"/>
                 </DockPanel>
 
                 <Canvas Background="Gray" Grid.Row="1" Margin="10,0,10,0">
-                    <DataGrid x:Name="dataGrid" ColumnWidth="Auto" Background="Gray" CanUserAddRows="False" IsReadOnly="True" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserDeleteRows="False" AlternatingRowBackground="#FFCBCBCB" HorizontalAlignment="Left" SelectionMode="Single" SelectionChanged="OnDataGridSelectionChanged"/>
+                    <DataGrid x:Name="dataGrid" ColumnWidth="Auto" Background="Gray" CanUserAddRows="False" IsReadOnly="True" MinColumnWidth="100" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserDeleteRows="False" AlternatingRowBackground="#FFCBCBCB" HorizontalAlignment="Left" SelectionMode="Single" SelectionChanged="OnDataGridSelectionChanged"/>
                 </Canvas>
             </Grid>
         </TabItem>

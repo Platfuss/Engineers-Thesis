@@ -65,30 +65,30 @@ namespace EngineersThesis
             var database = sqlHandler.Database;
             if (database != null)
             {
-                AddNewProductButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled = true;
+                ManageProductsButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled = true;
                
                 var dataSet = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProductsInWarehouse(sqlHandler.Database, warehouseName));
                 dataGrid.ItemsSource = dataSet.Tables[0].DefaultView;
                 foreach (var column in dataGrid.Columns)
                 {
-                    column.MinWidth = 100;
                     if (SqlConstants.translations.TryGetValue(column.Header.ToString(), out String result))
                         column.Header = result;
                 }
             }
             else
             {
-                AddNewProductButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled = false;
+                ManageProductsButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled = false;
             }
         }
 
-        private void AddNewProduct(object sender, RoutedEventArgs e)
+        private void OnManageProductButtonClick(object sender, RoutedEventArgs e)
         {
             var productEditor = new ProductEditor(sqlHandler)
             {
                 Owner = this
             };
             productEditor.ShowDialog();
+            SetDataGrid();
         }
 
         private void OpenWarehousesManager(object sender, RoutedEventArgs e)
@@ -106,17 +106,12 @@ namespace EngineersThesis
             }
         }
 
-        private void OnEditProduct(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void OnDataGridSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             selectedRow = dataGrid.SelectedIndex;
             if (selectedRow != -1)
             {
-                EditProductButton.IsEnabled = true;
+                ManageProductsButton.IsEnabled = true;
             }
         }
     }

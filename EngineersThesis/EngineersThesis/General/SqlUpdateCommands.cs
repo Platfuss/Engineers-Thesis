@@ -13,9 +13,9 @@ namespace EngineersThesis.General
             return $"UPDATE `{database}`.`warehouses` SET SHORT = '{newShortcut}', NAME = '{newName}' WHERE SHORT = '{oldShortcut}' AND NAME = '{oldName}';";
         }
 
-        public static String UpdateProduct(String database, String oldName, String name, String unit, String price, String tax)
+        public static String UpdateProductInfo(String database, String id, String name, String unit, String price, String tax)
         {
-            return $"UPDATE `{database}`.`products` SET NAME = '{name}', UNIT = '{unit}', PRICE = '{price}', TAX = '{tax}' WHERE NAME = '{oldName}' AND ID > '-1';";
+            return $"UPDATE `{database}`.`products` SET NAME = '{name}', UNIT = '{unit}', PRICE = '{price}', TAX = '{tax}' WHERE ID = '{id}';";
         }
     }
 }
