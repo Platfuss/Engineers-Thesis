@@ -26,7 +26,8 @@ namespace EngineersThesis.General
             {"unit", "Jednostka"},
             {"short", "Skrót"},
             {"class", "Grupa"},
-            {"price", "Cena"},
+            {"price_buy", "Zakup netto"},
+            {"price_sell", "Sprzedaż netto"},
             {"tax", "VAT"},
             {"complex", "Złożony"},
         };

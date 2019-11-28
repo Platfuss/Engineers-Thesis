@@ -13,9 +13,9 @@ namespace EngineersThesis.General
             return $"INSERT INTO `{database}`.`warehouses` (SHORT, NAME) VALUES ('{shortcut}', '{name}');";
         }
 
-        public static String InsertNewProduct(String database, String name, String unit, String price, String tax)
+        public static String InsertNewProduct(String database, String name, String unit, String priceBuy,String priceSell, String tax)
         {
-            return $"INSERT INTO `{database}`.`products` (NAME, UNIT, PRICE, TAX) VALUES ('{name}', '{unit}', '{price}', '{tax}');";
+            return $"INSERT INTO `{database}`.`products` (NAME, UNIT, PRICE_BUY, PRICE_SELL, TAX) VALUES ('{name}', '{unit}', '{priceBuy}', '{priceSell}', '{tax}');";
         }
 
         public static String InsertComponents(String database, String idComplex, List<Tuple<String, String>> list)

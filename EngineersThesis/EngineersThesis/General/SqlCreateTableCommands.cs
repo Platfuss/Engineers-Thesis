@@ -23,7 +23,8 @@ namespace EngineersThesis.General
                 $"ID int PRIMARY KEY AUTO_INCREMENT," +
                 $"NAME varchar(255) UNIQUE NOT NULL," +
                 $"UNIT varchar(5) NOT NULL," +
-                $"PRICE double NOT NULL CHECK(PRICE >= 0)," +
+                $"PRICE_BUY double NOT NULL CHECK(PRICE >= 0)," +
+                $"PRICE_SELL double NOT NULL CHECK(PRICE >= 0)," +
                 $"TAX int default 0 CHECK (AMOUNT >=0)" +
                 $");";
         }

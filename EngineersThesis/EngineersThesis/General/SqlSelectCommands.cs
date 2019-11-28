@@ -15,17 +15,17 @@ namespace EngineersThesis.General
 
         public static String ShowProducts(String database)
         {
-            return $"SELECT id, name, unit, tax, price FROM `{database}`.`products` ORDER BY name;";
+            return $"SELECT id, name, unit, tax, price_buy, price_sell FROM `{database}`.`products` ORDER BY name;";
         }
 
         public static String ShowProductsWithFollowingEmpty(String database, String columnName)
         {
-            return $"SELECT id, name, unit, tax, price, '' AS {columnName} FROM `{database}`.`products` ORDER BY name;";
+            return $"SELECT id, name, unit, tax, price_buy, price_sell, '' AS {columnName} FROM `{database}`.`products` ORDER BY name;";
         }
 
         public static String ShowProductsWithFollowingZero(String database)
         {
-            return $"SELECT id, name, unit, tax, price, '0' AS amount FROM `{database}`.`products` ORDER BY name;";
+            return $"SELECT id, name, unit, tax, price_buy, price_sell, '0' AS amount FROM `{database}`.`products` ORDER BY name;";
         }
 
         public static String ShowProductReversedComponents(String database, String complexProduct, String componentProduct)
@@ -50,7 +50,7 @@ namespace EngineersThesis.General
 
         public static String ShowProductsInWarehouse(String database, String warehouseName)
         {
-            return $"SELECT p.name, unit, amount, price, tax " +
+            return $"SELECT p.name, unit, amount, price_buy, price_sell, tax " +
                 $"FROM `{database}`.`warehouses` w " +
                 $"INNER JOIN `{database}`.`warehouses_products` w_p ON w.id = w_p.warehouse_id " +
                 $"INNER JOIN `{database}`.`products` p ON p.ID = w_p.product_id " +

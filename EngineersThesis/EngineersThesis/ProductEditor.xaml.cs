@@ -79,8 +79,13 @@ namespace EngineersThesis
         {
             if (dataGrid.SelectedIndex != -1)
             {
+                deleteProductButton.IsEnabled = true;
                 Action setDataGrid = SetDataGrid;
-                editProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, (DataRowView)dataGrid.SelectedItems[0]);
+                editProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, (DataRowView)dataGrid.SelectedItem);
+            }
+            else
+            {
+                deleteProductButton.IsEnabled = false;
             }
         }
 
@@ -94,5 +99,10 @@ namespace EngineersThesis
             Close();
         }
 
+        private void OnDeleteProductButton(object sender, RoutedEventArgs e)
+        {
+            sqlHandler.ExecuteNonQuery(SqlDeleteCommands.DeleteProduct(sqlHandler.Database, ((DataRowView)dataGrid.SelectedItem)[0].ToString()));
+            SetDataGrid();
+        }
     }
 }
