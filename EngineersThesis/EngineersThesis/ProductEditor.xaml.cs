@@ -102,6 +102,9 @@ namespace EngineersThesis
         private void OnDeleteProductButton(object sender, RoutedEventArgs e)
         {
             sqlHandler.ExecuteNonQuery(SqlDeleteCommands.DeleteProduct(sqlHandler.Database, ((DataRowView)dataGrid.SelectedItem)[0].ToString()));
+            Action setDataGrid = SetDataGrid;
+            editProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, false);
+            newProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, true);
             SetDataGrid();
         }
     }

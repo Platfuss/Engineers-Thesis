@@ -22,5 +22,10 @@ namespace EngineersThesis.General
         {
             return $"DELETE FROM `{database}`.`products` WHERE id = '{id}';";
         }
+
+        public static String DeleteContractor(String database, String id)
+        {
+            return $"DELETE FROM `{database}`.`contractors` WHERE ID = '{id}';";
+        }
     }
 }

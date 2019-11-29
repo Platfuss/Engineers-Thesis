@@ -107,7 +107,7 @@ namespace EngineersThesis.General
                 ExecuteCommand(SqlCreateTableCommands.ProductsTable(Database));
                 ExecuteCommand(SqlCreateTableCommands.ComplexProductComponentsTable(Database));
                 ExecuteCommand(SqlCreateTableCommands.WarehousesProducts(Database));
-                ExecuteCommand(SqlCreateTableCommands.ConstractorsTable(Database));
+                ExecuteCommand(SqlCreateTableCommands.ContractorsTable(Database));
                 ExecuteCommand(SqlCreateTableCommands.OrdersTable(Database));
                 ExecuteCommand(SqlCreateTableCommands.OrderDetailsTable(Database));
             }

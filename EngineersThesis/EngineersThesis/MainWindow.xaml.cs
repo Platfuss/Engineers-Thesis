@@ -28,7 +28,7 @@ namespace EngineersThesis
         private String warehouseShortcut;
         private String warehouseName;
 
-        private int selectedRow;
+        private int selectedDocumentRow, selectedContractorRow;
 
         public MainWindow()
         {
@@ -46,6 +46,8 @@ namespace EngineersThesis
             {
                 OpenWarehousesManager(new object(), new RoutedEventArgs());
             }
+            SetContractorGrid();
+            SetDocumentGrid();
         }
 
         private void ChooseDatabase(object sender, RoutedEventArgs e)
@@ -60,24 +62,60 @@ namespace EngineersThesis
             welcomeScreen.Close();
         }
 
-        private void SetDataGrid()
+        private void SetProductGrid()
         {
             var database = sqlHandler.Database;
             if (database != null)
             {
-                ManageProductsButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled = true;
-               
+                SetButtonsEnability(true);
+
                 var dataSet = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProductsInWarehouse(sqlHandler.Database, warehouseName));
-                dataGrid.ItemsSource = dataSet.Tables[0].DefaultView;
-                foreach (var column in dataGrid.Columns)
+                dataGridProducts.ItemsSource = dataSet.Tables[0].DefaultView;
+                foreach (var column in dataGridProducts.Columns)
                 {
                     if (SqlConstants.translations.TryGetValue(column.Header.ToString(), out String result))
                         column.Header = result;
                 }
+                dataGridProducts.Visibility = Visibility.Visible;
+                dataGridProducts.Columns[0].Visibility = Visibility.Hidden;
             }
             else
             {
-                ManageProductsButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled = false;
+                SetButtonsEnability(false);
+            }
+        }
+
+        private void SetDocumentGrid()
+        {
+            var database = sqlHandler.Database;
+            if (database != null)
+            {
+
+                var dataSet = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowOrders(sqlHandler.Database));
+                dataGridDocuments.ItemsSource = dataSet.Tables[0].DefaultView;
+                foreach (var column in dataGridDocuments.Columns)
+                {
+                    if (SqlConstants.translations.TryGetValue(column.Header.ToString().ToLower(), out String result))
+                        column.Header = result;
+                }
+                dataGridDocuments.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void SetContractorGrid()
+        {
+            var database = sqlHandler.Database;
+            if (database != null)
+            {
+                var dataSet = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowContractors(sqlHandler.Database));
+                dataGridContractors.ItemsSource = dataSet.Tables[0].DefaultView;
+                foreach (var column in dataGridContractors.Columns)
+                {
+                    if (SqlConstants.translations.TryGetValue(column.Header.ToString().ToLower(), out String result))
+                        column.Header = result;
+                }
+                dataGridContractors.Visibility = Visibility.Visible;
+                dataGridContractors.Columns[0].Visibility = Visibility.Hidden;
             }
         }
 
@@ -88,7 +126,7 @@ namespace EngineersThesis
                 Owner = this
             };
             productEditor.ShowDialog();
-            SetDataGrid();
+            SetProductGrid();
         }
 
         private void OpenWarehousesManager(object sender, RoutedEventArgs e)
@@ -102,17 +140,80 @@ namespace EngineersThesis
             {
                 warehouseName = warehousesManager.WarehouseName;
                 warehouseShortcut = warehousesManager.Shortcut;
-                SetDataGrid();
+                SetProductGrid();
             }
         }
 
-        private void OnDataGridSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnAddContractor(object sender, RoutedEventArgs e)
         {
-            selectedRow = dataGrid.SelectedIndex;
-            if (selectedRow != -1)
+            var contractorEditor = new ContractorEditor(sqlHandler)
             {
-                ManageProductsButton.IsEnabled = true;
+                Owner = this
+            };
+            contractorEditor.ShowDialog();
+            SetContractorGrid();
+        }
+
+        private void OnEditContractor(object sender, RoutedEventArgs e)
+        {
+            var contractorEditor = new ContractorEditor(sqlHandler, (DataRowView)dataGridContractors.Items[selectedContractorRow])
+            {
+                Owner = this
+            };
+            contractorEditor.ShowDialog();
+            SetContractorGrid();
+        }
+
+        private void OnDeleteContractor(object sender, RoutedEventArgs e)
+        {
+            if (selectedContractorRow != -1)
+            {
+                sqlHandler.ExecuteNonQuery(SqlDeleteCommands.DeleteContractor(sqlHandler.Database, ((DataRowView)dataGridContractors.SelectedItem)[0].ToString()));
             }
+            SetContractorGrid();
+        }
+
+        private void OnContractorGridSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            selectedContractorRow = dataGridContractors.SelectedIndex;
+            editContractorButton.IsEnabled = deleteContractorButton.IsEnabled = selectedContractorRow != -1;
+        }
+
+        private void OnManageCompanyInfo(object sender, RoutedEventArgs e)
+        {
+            bool isCompanySet = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowMyCompanyData(sqlHandler.Database))).Count == 1;
+            if (isCompanySet)
+            {
+                var result = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowMyCompanyData(sqlHandler.Database));
+                DataGrid dataGrid = new DataGrid()
+                {
+                    ItemsSource = result.Tables[0].DefaultView
+                };
+                var contractorEditor = new ContractorEditor(sqlHandler, (DataRowView)dataGrid.Items[0])
+                {
+                    Owner = this
+                };
+                contractorEditor.ShowDialog();
+            }
+            else
+            {
+                var contractorEditor = new ContractorEditor(sqlHandler, true)
+                {
+                    Owner = this
+                };
+                contractorEditor.ShowDialog();
+            }
+        }
+
+        private void OnDocumentGridSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            selectedDocumentRow = dataGridDocuments.SelectedIndex;
+        }
+
+        private void SetButtonsEnability(bool isEnabled)
+        {
+            ManageProductsButton.IsEnabled = addContractorButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled =
+                companyManageButton.IsEnabled = isEnabled;
         }
     }
 }

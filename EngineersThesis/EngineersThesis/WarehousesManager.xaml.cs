@@ -40,6 +40,10 @@ namespace EngineersThesis
             var database = sqlHandler.Database;
             var dataSet = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehouses(sqlHandler.Database));
             dataGrid.ItemsSource = dataSet.Tables[0].DefaultView;
+            if (dataGrid.Items.Count > 0)
+                dataGrid.SelectedIndex = 0;
+            else
+                dataGrid.SelectedIndex = -1;
         }
 
         private void OnColumnsGenerated(object sender, EventArgs e)

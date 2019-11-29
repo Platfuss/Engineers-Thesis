@@ -13,23 +13,22 @@ namespace EngineersThesis.General
 
         public static readonly Dictionary<String, String> translations = new Dictionary<String, String>()
         {
-            {"id", "Identyfikator"},
+            {"id", "ID"},
             {"name", "Nazwa"},
-            {"supplier", "Dostawca"},
-            {"purchaser", "Klient"},
-            {"phone_number", "Numer telefonu"},
-            {"phone_owner", "Właściciel telefonu"},
-            {"tax_code", "NIP"},
-            {"address", "Adres"},
+            {"street", "Ulica"},
+            {"city", "Miejscowość" },
+            {"postal_code", "Kod pocztowy" },
             {"date", "Data"},
             {"amount", "Ilość"},
             {"unit", "Jednostka"},
             {"short", "Skrót"},
-            {"class", "Grupa"},
             {"price_buy", "Zakup netto"},
             {"price_sell", "Sprzedaż netto"},
             {"tax", "VAT"},
+            {"tax_code", "NIP" },
             {"complex", "Złożony"},
+            {"number", "Numer" },
+            {"ordervalue", "Wartość dokumentu" },
         };
     }
 }

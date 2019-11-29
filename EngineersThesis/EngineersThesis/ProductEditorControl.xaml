@@ -56,6 +56,9 @@
                         <ComboBoxItem Content="cm"/>
                         <ComboBoxItem Content="m"/>
                         <Separator/>
+                        <ComboBoxItem Content="cm²"/>
+                        <ComboBoxItem Content="m²"/>
+                        <Separator/>
                         <ComboBoxItem Content="l"/>
                     </ComboBox>
 

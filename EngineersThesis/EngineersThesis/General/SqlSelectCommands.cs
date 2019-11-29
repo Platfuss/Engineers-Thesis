@@ -50,11 +50,32 @@ namespace EngineersThesis.General
 
         public static String ShowProductsInWarehouse(String database, String warehouseName)
         {
-            return $"SELECT p.name, unit, amount, price_buy, price_sell, tax " +
+            return $"SELECT p.id, p.name, unit, amount, price_buy, price_sell, tax " +
                 $"FROM `{database}`.`warehouses` w " +
                 $"INNER JOIN `{database}`.`warehouses_products` w_p ON w.id = w_p.warehouse_id " +
-                $"INNER JOIN `{database}`.`products` p ON p.ID = w_p.product_id " +
+                $"INNER JOIN `{database}`.`products` p              ON p.ID = w_p.product_id " +
                 $"AND w.name = '{warehouseName}';";
+        }
+
+        public static String ShowContractors(String database)
+        {
+            return $"SELECT * FROM `{database}`.`contractors` WHERE id <> 0;";
+        }
+
+        public static String ShowOrders(String database)
+        {
+            return "SELECT o.date, o.number, c.name, IF(o.purchase_sell, sum(p.PRICE_BUY) * amount, sum(p.PRICE_SELL) * amount) as orderValue " +
+                "FROM orders o " +
+                "INNER JOIN order_details o_d   ON o.id = o_d.order_id " +
+                "INNER JOIN contractors c       ON o.contractor_id = c.id " +
+                "INNER JOIN products p          ON o_d.product_id = p.id " +
+                "HAVING orderValue IS NOT NULL " +
+                "ORDER BY date;";
+        }
+
+        public static String ShowMyCompanyData(String database)
+        {
+            return $"SELECT * FROM `{database}`.`contractors` WHERE id = 0";
         }
     }
 }

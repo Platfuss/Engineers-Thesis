@@ -27,6 +27,16 @@ namespace EngineersThesis.General
             }
             return command.Remove(command.Length - 1) + ";";
         }
-        
+
+        public static String InsertContractor(String database, String name, String street, String city, String postalCode, String taxCode)
+        {
+            return $"INSERT INTO `{database}`.`contractors` (name, street, city, postal_code, tax_code) VALUES ('{name}', '{street}', '{city}', '{postalCode}', '{taxCode}');";
+        }
+
+        public static String InsertMyCompany(String database, String name, String street, String city, String postalCode, String taxCode)
+        {
+            return $"INSERT INTO `{database}`.`contractors` (id, name, street, city, postal_code, tax_code) VALUES (0, '{name}', '{street}', '{city}', '{postalCode}', '{taxCode}');" +
+                $"UPDATE `{database}`.`contractors` SET id = 0 ORDER BY id DESC LIMIT 1";
+        }
     }
 }

@@ -53,18 +53,15 @@ namespace EngineersThesis.General
                 $");";
         }
 
-        public static String ConstractorsTable(String database)
+        public static String ContractorsTable(String database)
         {
             return $"CREATE TABLE IF NOT EXISTS `{database}`.`contractors` (" +
                 $"ID int PRIMARY KEY AUTO_INCREMENT," +
-                $"NAME varchar(255) NOT NULL," +
-                $"SUPPLIER bit," +
-                $"PURCHASER bit," +
-                $"PHONE_NUMBER int(15)," +
-                $"EMAIL varchar(255)," +
-                $"TAX_CODE int(30)," +
-                $"ADDRESS varchar(255)," +
-                $"UNIQUE(NAME, ADDRESS)" +
+                $"NAME varchar(255) NOT NULL UNIQUE," +
+                $"STREET varchar(255)," +
+                $"CITY varchar(255)," +
+                $"POSTAL_CODE varchar(10)," +
+                $"TAX_CODE varchar(15)" +
                 $");";
         }
 
@@ -72,9 +69,11 @@ namespace EngineersThesis.General
         {
             return $"CREATE TABLE IF NOT EXISTS `{database}`.`orders`(" +
                 $"ID int PRIMARY KEY AUTO_INCREMENT," +
+                $"NUMBER varchar(30) NOT NULL UNIQUE," +
                 $"CONTRACTOR_ID int NOT NULL," +
                 $"WAREHOUSE int NOT NULL," +
-                $"DATE date," +
+                $"DATE date NOT NULL," +
+                $"PURCHASE_SELL bool NOT NULL," +
                 $"FOREIGN KEY(CONTRACTOR_ID) REFERENCES `{database}`.`contractors`(ID) ON DELETE CASCADE," +
                 $"FOREIGN KEY(WAREHOUSE) REFERENCES `{database}`.`warehouses`(ID) ON DELETE CASCADE" +
                 $");";

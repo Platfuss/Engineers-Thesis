@@ -17,5 +17,11 @@ namespace EngineersThesis.General
         {
             return $"UPDATE `{database}`.`products` SET NAME = '{name}', UNIT = '{unit}', PRICE_BUY = '{priceBuy}', PRICE_SELL = '{priceSell}', TAX = '{tax}' WHERE ID = '{id}';";
         }
+
+        public static String UpdateContractor(String database, String id,  String name, String street, String city, String postalCode, String taxCode)
+        {
+            return $"UPDATE `{database}`.`contractors` SET name = '{name}', street = '{street}', city = '{city}', postal_code = '{postalCode}', " +
+                $"tax_code = '{taxCode}' WHERE id = '{id}';";
+        }
     }
 }
