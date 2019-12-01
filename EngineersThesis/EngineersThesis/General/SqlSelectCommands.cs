@@ -95,11 +95,13 @@ namespace EngineersThesis.General
 
         public static String ShowOrders(String database, String warehouseId)
         {
-            return $"SELECT DATE_FORMAT(o.date, '%Y-%m-%d') as date, o.number, o.kind, c.name, IF(o.purchase_sell, sum(p.PRICE_SELL) * amount, sum(p.PRICE_BUY) * amount) as orderValue " +
-                $"FROM `{database}`.`orders` o " +
-                $"INNER JOIN `{database}`.`order_details` o_d   ON o.id = o_d.order_id " +
-                $"INNER JOIN `{database}`.`contractors` c       ON o.contractor_id = c.id " +
-                $"INNER JOIN `{database}`.`products` p          ON o_d.product_id = p.id " +
+            return
+                $"SELECT DATE_FORMAT(o.date, '%Y-%m-%d') as date, o.number, o.kind, IF(c.name IS NOT NULL, c.name, w.short) as name, IF(o.purchase_sell, sum(p.PRICE_SELL) * amount, sum(p.PRICE_BUY) * amount) as orderValue " +
+                $"FROM `orders` o " +
+                $"INNER JOIN `order_details` o_d ON o.id = o_d.order_id " +
+                $"LEFT JOIN `contractors` c ON o.contractor_id = c.id " +
+                $"LEFT JOIN `warehouses` w ON w.id = o.WAREHOUSE_MOVE_ID " +
+                $"INNER JOIN `products` p ON o_d.product_id = p.id " +
                 $"WHERE o.warehouse_id = '{warehouseId}' " +
                 $"GROUP BY o.number " +
                 $"HAVING orderValue IS NOT NULL " +
@@ -117,6 +119,29 @@ namespace EngineersThesis.General
                 $"WHERE YEAR(date) = YEAR('{year}');";
         }
 
-        //public static String ShowWasProductInWarehouse(String database, String )
+        public static String ShowProductsInDocument(String orderNumber)
+        {
+            return $"SELECT p.name, p.unit, p.tax, p.price_buy, p.price_sell, details.amount FROM products p " +
+                $"INNER JOIN order_details details ON product_id = p.id " +
+                $"INNER JOIN orders ord ON details.order_id = ord.id " +
+                $"WHERE ord.number = '{orderNumber}';";
+        }
+
+        public static String ShowDocumentHasContractor(String orderNumber)
+        {
+            return $"SELECT IF (contractor_id is not null, 'yes', 'no') FROM orders WHERE number = '{orderNumber}';";
+        }
+
+        public static String ShowContractorDataForOrderNumber(String orderNumber)
+        {
+            return $"SELECT name, street, city, postal_code, tax_code FROM contractors " +
+                $"INNER JOIN orders ON contractors.id = orders.contractor_id WHERE orders.number = '{orderNumber}'";
+        }
+
+        public static String ShowWarehouseDataForOrderNumber(String orderNumber)
+        {
+            return $"SELECT short, name FROM warehouses " +
+                $"INNER JOIN orders ON warehouses.id = orders.warehouse_move_id WHERE orders.number = '{orderNumber}'";
+        }
     }
 }

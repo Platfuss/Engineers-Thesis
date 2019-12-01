@@ -33,6 +33,46 @@ namespace EngineersThesis
             Move,
             Sell,
         }
+        bool readOnly = false;
+
+        public DocumentEditor(SqlHandler handler, DataRowView row)
+        {
+            InitializeComponent();
+            readOnly = true;
+            sqlHandler = handler;
+            newEntryButton.Visibility = productComboBox.Visibility = acceptButton.Visibility = deleteButton.Visibility = Visibility.Hidden;
+            contractorComboBox.IsEnabled = datePicker.IsEnabled = false;
+            datePicker.Text = row[0].ToString();
+            String orderNumber = row[1].ToString();
+            var result = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProductsInDocument(orderNumber));
+            dataGrid.ItemsSource = result.Tables[0].DefaultView;
+            if (dataGrid.Items.Count > 0)
+            {
+                dataGrid.Visibility = Visibility.Visible;
+            }
+            List<List<String>> sqlExecutionResult = new List<List<string>>();
+            var list = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowDocumentHasContractor(row[1].ToString())));
+            if (list[0][0] == "yes")
+            {
+                sqlExecutionResult = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowContractorDataForOrderNumber(row[1].ToString())));
+            }
+            else
+            {
+                sqlExecutionResult = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehouseDataForOrderNumber(row[1].ToString())));
+            }
+
+            for (int i = 0; i < sqlExecutionResult.Count; i++)
+            {
+                String contractor = "";
+                foreach (var field in sqlExecutionResult[i])
+                {
+                    contractor += field + ", ";
+                }
+                contractor = contractor.Remove(contractor.Length - 2);
+                contractorComboBox.Items.Add(contractor);
+            }
+            contractorComboBox.SelectedIndex = 0;
+        }
 
         public DocumentEditor(SqlHandler handler, String _warehouseName, String _documentType)
         {
@@ -139,7 +179,6 @@ namespace EngineersThesis
                 productComboBox.SelectedIndex = -1;
                 productComboBox.IsEnabled = newEntryButton.IsEnabled = false;
             }
-            
         }
 
         private void OnNewEntryClick(object sender, RoutedEventArgs e)
@@ -177,12 +216,16 @@ namespace EngineersThesis
 
             if (dataGrid.Columns.Count > 0)
             {
-                dataGrid.Columns[0].Visibility = Visibility.Hidden;
                 var lastColumn = dataGrid.Columns[dataGrid.Columns.Count - 1];
                 lastColumn.CellStyle = new Style(typeof(DataGridCell));
                 lastColumn.CellStyle.Setters.Add(new Setter(BackgroundProperty, new SolidColorBrush(Colors.LightSkyBlue)));
                 lastColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
-                lastColumn.IsReadOnly = false;
+
+                if (!readOnly)
+                {
+                    dataGrid.Columns[0].Visibility = Visibility.Hidden;
+                    lastColumn.IsReadOnly = false;
+                }
             }
         }
 
@@ -294,12 +337,12 @@ namespace EngineersThesis
                                 sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId, component.Key, (-component.Value).ToString()));
                             }
 
-                            sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrder(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
-                                warehouseId, documentType+"-", "1", datePicker.SelectedDate.ToString()));
+                            sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderForMM(sqlHandler.Database, nextCode, warehouseId, 
+                                contractorIndexToID[contractorComboBox.SelectedIndex], documentType +"-", "1", datePicker.SelectedDate.ToString()));
                             String moveOutOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
 
                             nextCode = ((++number).ToString()).PadLeft(4, '0') + @"/" + Convert.ToDateTime(datePicker.Text).Year;
-                            sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrder(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
+                            sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderForMM(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
                                 warehouseId, documentType+"+", "0", datePicker.SelectedDate.ToString()));
                             String moveInOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
 
@@ -334,7 +377,6 @@ namespace EngineersThesis
                                         sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(contractorIndexToID[contractorComboBox.SelectedIndex],
                                             row[0].ToString(), row[lastColumnIndex].ToString()));
                                     }
-                                    
                                     sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveOutOrderId.ToString(),
                                         row[0].ToString(), row[lastColumnIndex].ToString()));
                                     sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveInOrderId.ToString(),
@@ -347,7 +389,6 @@ namespace EngineersThesis
                                     sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveInOrderId.ToString(),
                                         row[0].ToString(), row[lastColumnIndex].ToString()));
                                 }
-
                             }
                             Close();
                         }

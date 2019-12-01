@@ -70,13 +70,15 @@ namespace EngineersThesis.General
             return $"CREATE TABLE IF NOT EXISTS `orders`(" +
                 $"ID int PRIMARY KEY AUTO_INCREMENT," +
                 $"NUMBER varchar(30) NOT NULL UNIQUE," +
-                $"CONTRACTOR_ID int NOT NULL," +
+                $"CONTRACTOR_ID int," +
                 $"WAREHOUSE_ID int NOT NULL," +
+                $"WAREHOUSE_MOVE_ID int," +
                 $"KIND varchar(5) NOT NULL," +
                 $"PURCHASE_SELL bool," +
                 $"DATE date NOT NULL," +
                 $"FOREIGN KEY(CONTRACTOR_ID) REFERENCES `contractors`(ID) ON DELETE CASCADE," +
-                $"FOREIGN KEY(WAREHOUSE_ID) REFERENCES `warehouses`(ID) ON DELETE CASCADE" +
+                $"FOREIGN KEY(WAREHOUSE_ID) REFERENCES `warehouses`(ID) ON DELETE CASCADE," +
+                $"FOREIGN KEY(WAREHOUSE_MOVE_ID) REFERENCES `warehouses`(ID) ON DELETE CASCADE" +
                 $");";
         }
 
@@ -102,15 +104,15 @@ namespace EngineersThesis.General
             $"  DECLARE war_id int; " +
             $"  DECLARE doctype bool; " +
             $"  SELECT orders.purchase_sell INTO doctype FROM orders INNER JOIN order_details ON order_details.order_id = orders.id WHERE order_details.order_id = new.order_id GROUP BY orders.purchase_sell; " +
+            $"  SELECT o.warehouse_id INTO war_id FROM orders o INNER JOIN order_details o_d ON o.id = o_d.ORDER_ID WHERE o_d.ORDER_ID = new.order_id GROUP BY o.warehouse_id; " +
             $"  IF(doctype = '0') THEN " +
-            $"      IF(EXISTS(SELECT product_id FROM warehouses_products w_p WHERE w_p.PRODUCT_ID = NEW.product_id)) THEN " +
-            $"          UPDATE warehouses_products w_p SET w_p.amount = w_p.amount + new.amount WHERE w_p.product_id = new.product_id; " +
+            $"      IF(EXISTS(SELECT product_id FROM warehouses_products w_p WHERE w_p.PRODUCT_ID = NEW.product_id AND warehouse_id = war_id)) THEN " +
+            $"          UPDATE warehouses_products w_p SET w_p.amount = w_p.amount + new.amount WHERE w_p.product_id = new.product_id AND w_p.warehouse_id = war_id; " +
             $"      ELSE " +
-            $"          SELECT o.warehouse_id INTO war_id FROM orders o INNER JOIN order_details o_d ON o.id = o_d.ORDER_ID WHERE o_d.ORDER_ID = new.order_id GROUP BY o.warehouse_id; " +
-            $"          INSERT INTO warehouses_products(warehouse_id, product_id, amount) VALUES(war_id, new.product_id, new.amount); " +
+            $"          INSERT INTO warehouses_products(warehouse_id, product_id, amount) VALUES (war_id, new.product_id, new.amount); " +
             $"      END IF ;" +
             $"  ELSE " +
-            $"      UPDATE warehouses_products w_p SET w_p.amount = w_p.amount - new.amount WHERE w_p.product_id = new.product_id; " +
+            $"      UPDATE warehouses_products w_p SET w_p.amount = w_p.amount - new.amount WHERE w_p.product_id = new.product_id AND w_p.warehouse_id = war_id; " +
             $"  END IF; " +
             $"END$$";
         }

@@ -50,6 +50,12 @@ namespace EngineersThesis.General
                 $"('{number}', '{contractor_id}', '{warehouse_id}', '{kind}', '{purcharse_sell}', '{date}')";
         }
 
+        public static String InsertOrderForMM(String database, String number, String warehouse_id, String warehouse_move_id, String kind, String purcharse_sell, String date)
+        {
+            return $"INSERT INTO `{database}`.`orders` (number, warehouse_id, warehouse_move_id, kind, purchase_sell, date) VALUES" +
+                $"('{number}', '{warehouse_id}', '{warehouse_move_id}', '{kind}', '{purcharse_sell}', '{date}')";
+        }
+
         public static String InsertOrderDetails (String database, String order_id, String product_id, String amount)
         {
             return $"INSERT INTO `{database}`.`order_details` (order_id, product_id, amount) VALUES ('{order_id}', '{product_id}', '{amount}');";

@@ -20,7 +20,7 @@
 
         <Label Content="Nazwa" HorizontalAlignment="Left" VerticalAlignment="Center" Width="57" VerticalContentAlignment="Center" Height="26" Margin="0,14,0,15"/>
         <Label Content="NIP" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" VerticalContentAlignment="Center" Height="26" Width="57" Margin="0,15,0,14" />
-        <TextBox x:Name="nameTextBox" HorizontalAlignment="Right" Height="24" TextWrapping="Wrap" VerticalAlignment="Center" Width="154" Grid.Column="0" Grid.Row="0" MaxLength="15" Margin="0,0,10,0" TextChanged="OnTextChanged"/>
+        <TextBox x:Name="nameTextBox" HorizontalAlignment="Right" Height="24" TextWrapping="Wrap" VerticalAlignment="Center" Width="154" Grid.Column="0" Grid.Row="0" MaxLength="35" Margin="0,0,10,0" TextChanged="OnTextChanged"/>
         <TextBox x:Name="taxCodeTextBox" HorizontalAlignment="Right" Height="24" TextWrapping="Wrap" VerticalAlignment="Center" Width="154" Grid.Column="0" Grid.Row="1" MaxLength="15" Margin="0,0,10,0" TextChanged="OnTextChanged"/>
 
         <Label Content="Ulica" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="83" VerticalContentAlignment="Center" Height="26" Margin="0,14,0,15"/>

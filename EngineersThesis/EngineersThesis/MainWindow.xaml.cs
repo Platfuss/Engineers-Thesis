@@ -218,6 +218,7 @@ namespace EngineersThesis
         private void OnDocumentGridSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             selectedDocumentRow = dataGridDocuments.SelectedIndex;
+            showDocumentDetailsButton.IsEnabled = selectedDocumentRow > -1;
         }
 
         private void OnAddNewDocumentClick(object sender, RoutedEventArgs e)
@@ -244,6 +245,18 @@ namespace EngineersThesis
         private void OnGeneratePdfClick(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void OnShowDocumentDetails(object sender, RoutedEventArgs e)
+        {
+            var row = (DataRowView)dataGridDocuments.Items[selectedDocumentRow];
+            var documentEditor = new DocumentEditor(sqlHandler, row)
+            {
+                Owner = this
+            };
+            documentEditor.ShowDialog();
+            SetProductGrid();
+            SetDocumentGrid();
         }
 
         private void SetButtonsEnability(bool isEnabled)
