@@ -45,7 +45,8 @@ namespace EngineersThesis
             if (sqlHandler.Database != null)
             {
                 OpenWarehousesManager(new object(), new RoutedEventArgs());
-                SetDocumentGrid();
+                if (warehouseName != null && warehouseName != "")
+                    SetDocumentGrid();
             }
         }
 
@@ -149,6 +150,7 @@ namespace EngineersThesis
                 warehouseName = warehousesManager.WarehouseName;
                 warehouseShortcut = warehousesManager.Shortcut;
                 SetProductGrid();
+                SetDocumentGrid();
             }
         }
 

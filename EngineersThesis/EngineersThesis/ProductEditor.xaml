@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EngineersThesis"
         mc:Ignorable="d"
-        Title="Okno produktu" Height="499" Width="1200" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Loaded="OnWindowLoaded">
+        Title="Okno produktu" Height="499" Width="1400" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Loaded="OnWindowLoaded">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="375"/>
+            <ColumnDefinition Width="450"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="375"/>
+            <ColumnDefinition Width="450"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -26,7 +26,7 @@
             <Frame x:Name="editProductFrame" NavigationUIVisibility="Hidden" Margin="1, 2, 1, 2"/>
         </Grid>
 
-        <DataGrid x:Name="dataGrid" Grid.Column="1" Grid.Row="1" Margin="1, 2, 1, 2" ColumnWidth="Auto" Background="Gray" CanUserAddRows="False" IsReadOnly="True" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserDeleteRows="False" AlternatingRowBackground="#FFCBCBCB" HorizontalAlignment="Left" SelectionMode="Single" SelectionChanged="OnDataGridSelectionChanged"/>
+        <DataGrid x:Name="dataGrid" Grid.Column="1" Grid.Row="1" Margin="1, 2, 1, 2" ColumnWidth="Auto" CanUserReorderColumns="False" Background="Gray" CanUserAddRows="False" IsReadOnly="True" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserDeleteRows="False" AlternatingRowBackground="#FFCBCBCB" HorizontalAlignment="Left" SelectionMode="Single" SelectionChanged="OnDataGridSelectionChanged"/>
         <Button x:Name="deleteProductButton" Content="Usuń produkt" Width="Auto" Grid.Column="1" Grid.Row="3" Height="20" Click="OnDeleteProductButton" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Right" Margin="0,0,20,0" VerticalAlignment="Center"/>
         
         <Grid Grid.Column="2" Grid.Row="1" Margin="0">

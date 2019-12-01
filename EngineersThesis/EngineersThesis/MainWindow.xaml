@@ -61,13 +61,13 @@
         </DockPanel>
 
         <Canvas Background="Gray" Grid.Row="3" Grid.RowSpan="2" Margin="10, 2, 1, 10">
-            <DataGrid x:Name="dataGridProducts" Visibility="Hidden"  ColumnWidth="Auto" Background="Gray" CanUserAddRows="False" IsReadOnly="True" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserDeleteRows="False" AlternatingRowBackground="#FFCBCBCB" HorizontalAlignment="Left" SelectionMode="Single"/>
+            <DataGrid x:Name="dataGridProducts" Visibility="Hidden"  ColumnWidth="Auto" RowHeight="25" Background="Gray" CanUserAddRows="False" IsReadOnly="True" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserDeleteRows="False" AlternatingRowBackground="#FFCBCBCB" HorizontalAlignment="Left" SelectionMode="Single" CanUserReorderColumns="False"/>
         </Canvas>
         <Canvas Background="Gray" Grid.Row="4" Grid.Column="1" Margin="1, 2, 1, 10">
-            <DataGrid x:Name="dataGridDocuments" Visibility="Hidden" ColumnWidth="Auto" Background="Gray" CanUserAddRows="False" IsReadOnly="True" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserDeleteRows="False" AlternatingRowBackground="#FFCBCBCB" HorizontalAlignment="Left" SelectionMode="Single" SelectionChanged="OnDocumentGridSelectionChanged"/>
+            <DataGrid x:Name="dataGridDocuments" Visibility="Hidden" ColumnWidth="Auto" RowHeight="25" Background="Gray" CanUserAddRows="False" IsReadOnly="True" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserDeleteRows="False" AlternatingRowBackground="#FFCBCBCB" HorizontalAlignment="Left" SelectionMode="Single" CanUserReorderColumns="False" SelectionChanged="OnDocumentGridSelectionChanged"/>
         </Canvas>
         <Canvas Background="Gray" Grid.Row="3" Grid.Column="2" Grid.RowSpan="2" Margin="1, 2, 10, 10">
-            <DataGrid x:Name="dataGridContractors" Visibility="Hidden" ColumnWidth="Auto" Background="Gray" CanUserAddRows="False" IsReadOnly="True" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserDeleteRows="False" AlternatingRowBackground="#FFCBCBCB" HorizontalAlignment="Right" SelectionMode="Single" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" SelectionChanged="OnContractorGridSelectionChanged"/>
+            <DataGrid x:Name="dataGridContractors" Visibility="Hidden" ColumnWidth="Auto" RowHeight="25" Background="Gray" CanUserAddRows="False" IsReadOnly="True" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserDeleteRows="False" AlternatingRowBackground="#FFCBCBCB" HorizontalAlignment="Right" SelectionMode="Single" CanUserReorderColumns="False" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" SelectionChanged="OnContractorGridSelectionChanged"/>
         </Canvas>
     </Grid>
 </Window>

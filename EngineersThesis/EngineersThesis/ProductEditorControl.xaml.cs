@@ -97,7 +97,7 @@ namespace EngineersThesis
             var database = sqlHandler.Database;
             if (database != null)
             {
-                var dataSet = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProductsWithFollowingZero(sqlHandler.Database));
+                var dataSet = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowOrdinaryProductsWithFollowingZero(sqlHandler.Database));
                 dataGrid.ItemsSource = dataSet.Tables[0].DefaultView;
                 OnDataGridColumnsGenerated(new object(), new EventArgs());
             }

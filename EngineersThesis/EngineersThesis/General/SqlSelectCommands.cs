@@ -13,6 +13,11 @@ namespace EngineersThesis.General
             return $"SELECT short, name FROM `{database}`.`warehouses` ORDER BY short;";
         }
 
+        public static String ShowOtherWarehouses(String database, String thisWarehouseName)
+        {
+            return $"SELECT id, short, name FROM warehouses WHERE name <> '{thisWarehouseName}' ORDER BY short;";
+        }
+
         public static String ShowWarehouseNameToId(String database, String name)
         {
             return $"SELECT id FROM `{database}`.`warehouses` WHERE name = '{name}';";
@@ -41,6 +46,11 @@ namespace EngineersThesis.General
         public static String ShowProductsWithFollowingZero(String database)
         {
             return $"SELECT id, name, unit, tax, price_buy, price_sell, '0' AS amount FROM `{database}`.`products` ORDER BY name;";
+        }
+
+        public static String ShowOrdinaryProductsWithFollowingZero(String database)
+        {
+            return $"SELECT id, name, unit, tax, price_buy, price_sell, '0' AS amount FROM `{database}`.`products` WHERE NOT EXISTS(SELECT id_complex FROM components where id = id_complex) ORDER BY name;";
         }
 
         public static String ShowProductsWithFollowingZeroForID(String database, String id)

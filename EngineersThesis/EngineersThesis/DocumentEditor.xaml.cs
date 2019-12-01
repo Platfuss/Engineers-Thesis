@@ -40,7 +40,6 @@ namespace EngineersThesis
             sqlHandler = handler;
             warehouseName = _warehouseName;
             documentType = _documentType;
-            PrepareControls();
             switch (_documentType)
             {
                 case "PZ":
@@ -59,11 +58,21 @@ namespace EngineersThesis
                     documentNature = DocumentNature.Move;
                     break;
             }
+            PrepareControls();
         }
 
         private void PrepareControls()
         {
-            var sqlExecutionResult = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowContractors(sqlHandler.Database)));
+            List<List<String>> sqlExecutionResult = new List<List<String>>();
+            if (documentNature != DocumentNature.Move)
+            {
+                sqlExecutionResult = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowContractors(sqlHandler.Database)));
+            }
+            else
+            {
+                sqlExecutionResult = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowOtherWarehouses(sqlHandler.Database, warehouseName)));
+            }
+
             for (int i = 0; i < sqlExecutionResult.Count; i++)
             {
                 contractorIndexToID.Add(i, sqlExecutionResult[i][0]);
@@ -194,7 +203,7 @@ namespace EngineersThesis
 
                 var list = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastDocumentNumber(sqlHandler.Database, datePicker.Text)));
                 int number = 0;
-                if (list.Count > 0)
+                if (list[0][0] != null && list[0][0] != "")
                     number = Convert.ToInt32(list[0][0].ToString());
                 String nextCode = ((++number).ToString()).PadLeft(4, '0') + @"/" + Convert.ToDateTime(datePicker.Text).Year;
                 String warehouseId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehouseNameToId(sqlHandler.Database, warehouseName)))[0][0];
@@ -223,169 +232,125 @@ namespace EngineersThesis
                         Dictionary<String, double> componentsInNeed = new Dictionary<String, double>();
                         Dictionary<String, double> ordinaryProductsInNeed = new Dictionary<string, double>();
 
-                        foreach (DataRowView row in dataGrid.Items)
+                        bool canProductsBeMoved = CanProductsBeMovedOut(ref complexProductsToComplete, ref complexProductsId, ref componentsInNeed, ref ordinaryProductsInNeed);
+                        
+                        if (canProductsBeMoved)
                         {
-                            foreach (var node in complexProducts)
+                            foreach (var component in componentsInNeed)
                             {
-                                if (node[0] == row[0].ToString())
-                                {
-                                    complexProductsId.Add(node[0].ToString());
-                                    bool isProductInWarehouse = false;
-                                    foreach (DataRowView productInWarehouseRow in productsInWarehouse.Tables[0].DefaultView)
-                                    {
-                                        if (productInWarehouseRow[0].ToString() == node[0])
-                                        {
-                                            isProductInWarehouse = true;
-                                            double itemsInWarehouseAfterSell = Convert.ToDouble(productInWarehouseRow[lastColumnIndex].ToString())
-                                                - Convert.ToDouble(row[lastColumnIndex].ToString());
-                                            if (itemsInWarehouseAfterSell < 0)
-                                            {
-                                                complexProductsToComplete[node[0]] = -itemsInWarehouseAfterSell;
-                                            }
-                                            break;
-                                        }
-                                    }
-                                    if (isProductInWarehouse == false)
-                                    {
-                                        complexProductsToComplete[node[0]] = Convert.ToDouble(row[lastColumnIndex].ToString());
-                                    }
-                                }
-                            }
-                        }
-
-                        foreach (DataRowView row in dataGrid.Items)
-                        {
-                            if (!complexProductsId.Contains(row[0].ToString()))
-                            {
-                                bool productIsInWarehouse = false;
-                                foreach (DataRowView productInWarehouseRow in productsInWarehouse.Tables[0].DefaultView)
-                                {
-                                    if (row[0].ToString() == productInWarehouseRow[0].ToString())
-                                    {
-                                        productIsInWarehouse = true;
-                                        double amountInWarehouse = Convert.ToDouble(productInWarehouseRow[3].ToString());
-                                        double amountToDelete = Convert.ToDouble(row[lastColumnIndex].ToString());
-                                        if (amountInWarehouse - amountToDelete < 0)
-                                        {
-                                            MessageBox.Show("Za mało przedmiotów w magazynie by sprzedać produkt");
-                                            return;
-                                        }
-                                        else
-                                        {
-                                            bool result = ordinaryProductsInNeed.TryGetValue(row[0].ToString(), out double sth);
-                                            if (!result)
-                                            {
-                                                ordinaryProductsInNeed.Add(row[0].ToString(), 0);
-                                            }
-                                            ordinaryProductsInNeed[row[0].ToString()] += amountToDelete;
-                                        }
-                                        break;
-                                    }
-                                }
-
-                                if (productIsInWarehouse == false)
-                                {
-                                    MessageBox.Show("Za mało przedmiotów w magazynie by sprzedać produkt");
-                                    return;
-                                }
-                            }
-                        }
-
-                        foreach (var pair in complexProductsToComplete)
-                        {
-                            var productRecipe = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowComplexProductRecipe(sqlHandler.Database, pair.Key));
-                            foreach (DataRowView recipeRow in productRecipe.Tables[0].DefaultView)
-                            {
-                                double recipeMultipler = Convert.ToDouble(recipeRow[1].ToString());
-                                foreach (DataRowView row in dataGrid.Items)
-                                {
-                                    if (row[0].ToString() == pair.Key)
-                                    {
-                                        double amountToDelete = Convert.ToDouble(row[lastColumnIndex].ToString()) * recipeMultipler;
-                                        if (componentsInNeed.ContainsKey(recipeRow[0].ToString()))
-                                        {
-                                            componentsInNeed[recipeRow[0].ToString()] += amountToDelete;
-                                        }
-                                        else
-                                        {
-                                            componentsInNeed.Add(recipeRow[0].ToString(), amountToDelete);
-                                        }
-
-                                        if (ordinaryProductsInNeed.ContainsKey(recipeRow[0].ToString()))
-                                        {
-                                            ordinaryProductsInNeed[recipeRow[0].ToString()] += amountToDelete;
-                                        }
-                                        else
-                                        {
-                                            ordinaryProductsInNeed.Add(recipeRow[0].ToString(), amountToDelete);
-                                        }
-                                        break;
-                                    }
-                                }
+                                sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId, component.Key, (-component.Value).ToString()));
                             }
 
-                            foreach (DataRowView recipeRow in productRecipe.Tables[0].DefaultView)
+                            sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrder(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
+                                warehouseId, documentType, "1", datePicker.SelectedDate.ToString()));
+                            String insertedOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
+
+                            foreach (DataRowView row in dataGrid.Items)
                             {
-                                bool componentIsInWarehouse = false;
-                                foreach (DataRowView productInWarehouseRow in productsInWarehouse.Tables[0].DefaultView)
+                                if (complexProductsId.Contains(row[0].ToString()))
                                 {
-                                    if (recipeRow[0].ToString() == productInWarehouseRow[0].ToString())
+                                    bool isProductInWarehouse = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(
+                                        SqlSelectCommands.CheckIfProductIdIsInWarehouse(warehouseId, row[0].ToString()))).Count == 0;
+
+                                    if (isProductInWarehouse)
                                     {
-                                        componentIsInWarehouse = true;
-                                        double amountInWarehouse = Convert.ToDouble(productInWarehouseRow[3].ToString());
-                                        double amountToDelete = ordinaryProductsInNeed[recipeRow[0].ToString()];
-                                        if (amountInWarehouse - amountToDelete < 0)
-                                        {
-                                            MessageBox.Show("Za mało przedmiotów w magazynie by ukończyć transakcję");
-                                            return;
-                                        }
-                                        break;
+                                        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertProductToWarehouse(warehouseId, row[0].ToString(),
+                                            row[lastColumnIndex].ToString()));
                                     }
-                                }
-                                if (componentIsInWarehouse == false)
-                                {
-                                    MessageBox.Show("Za mało przedmiotów w magazynie by ukończyć transakcję");
-                                    return;
-                                }
-                            }
-                        }
-
-                        foreach (var component in componentsInNeed)
-                        {
-                            sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId, component.Key, (-component.Value).ToString()));
-                        }
-
-                        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrder(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
-                            warehouseId, documentType, "1", datePicker.SelectedDate.ToString()));
-                        String insertedOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
-
-                        foreach (DataRowView row in dataGrid.Items)
-                        {
-                            if (complexProductsId.Contains(row[0].ToString()))
-                            {
-                                bool isProductInWarehouse = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(
-                                    SqlSelectCommands.CheckIfProductIdIsInWarehouse(warehouseId, row[0].ToString()))).Count == 0;
-
-                                if (isProductInWarehouse)
-                                {
-                                    sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertProductToWarehouse(warehouseId, row[0].ToString(),
-                                        row[lastColumnIndex].ToString()));
+                                    else
+                                    {
+                                        sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId,
+                                            row[0].ToString(), row[lastColumnIndex].ToString()));
+                                    }
+                                    sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, insertedOrderId.ToString(),
+                                        row[0].ToString(), row[lastColumnIndex].ToString()));
                                 }
                                 else
                                 {
-                                    sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId,
+                                    sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, insertedOrderId.ToString(),
+                                         row[0].ToString(), row[lastColumnIndex].ToString()));
+                                }
+
+                            }
+                            Close();
+                        }
+                    }
+                    else
+                    {
+                        int lastColumnIndex = dataGrid.Columns.Count - 1;
+                        DataSet productsInWarehouse = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProductsInWarehouse(sqlHandler.Database, warehouseName));
+                        var complexProducts = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowComplexProductsID(sqlHandler.Database)));
+                        Dictionary<String, double> complexProductsToComplete = new Dictionary<string, double>();
+                        List<String> complexProductsId = new List<String>();
+                        Dictionary<String, double> componentsInNeed = new Dictionary<String, double>();
+                        Dictionary<String, double> ordinaryProductsInNeed = new Dictionary<string, double>();
+
+                        bool canProductsBeMoved = CanProductsBeMovedOut(ref complexProductsToComplete, ref complexProductsId, ref componentsInNeed, ref ordinaryProductsInNeed);
+
+                        if (canProductsBeMoved)
+                        {
+                            foreach (var component in componentsInNeed)
+                            {
+                                sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId, component.Key, (-component.Value).ToString()));
+                            }
+
+                            sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrder(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
+                                warehouseId, documentType+"-", "1", datePicker.SelectedDate.ToString()));
+                            String moveOutOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
+
+                            nextCode = ((++number).ToString()).PadLeft(4, '0') + @"/" + Convert.ToDateTime(datePicker.Text).Year;
+                            sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrder(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
+                                warehouseId, documentType+"+", "0", datePicker.SelectedDate.ToString()));
+                            String moveInOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
+
+                            foreach (DataRowView row in dataGrid.Items)
+                            {
+                                if (complexProductsId.Contains(row[0].ToString()))
+                                {
+                                    bool isProductInWarehouse = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(
+                                        SqlSelectCommands.CheckIfProductIdIsInWarehouse(warehouseId, row[0].ToString()))).Count == 0;
+
+                                    if (isProductInWarehouse)
+                                    {
+                                        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertProductToWarehouse(warehouseId, row[0].ToString(),
+                                            row[lastColumnIndex].ToString()));
+                                    }
+                                    else
+                                    {
+                                        sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId,
+                                            row[0].ToString(), row[lastColumnIndex].ToString()));
+                                    }
+
+                                    isProductInWarehouse = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(
+                                        SqlSelectCommands.CheckIfProductIdIsInWarehouse(warehouseId, row[0].ToString()))).Count == 0;
+
+                                    if (isProductInWarehouse)
+                                    {
+                                        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertProductToWarehouse(contractorIndexToID[contractorComboBox.SelectedIndex], 
+                                            row[0].ToString(), row[lastColumnIndex].ToString()));
+                                    }
+                                    else
+                                    {
+                                        sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(contractorIndexToID[contractorComboBox.SelectedIndex],
+                                            row[0].ToString(), row[lastColumnIndex].ToString()));
+                                    }
+                                    
+                                    sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveOutOrderId.ToString(),
+                                        row[0].ToString(), row[lastColumnIndex].ToString()));
+                                    sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveInOrderId.ToString(),
                                         row[0].ToString(), row[lastColumnIndex].ToString()));
                                 }
-                                sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, insertedOrderId.ToString(),
-                                    row[0].ToString(), row[lastColumnIndex].ToString()));
+                                else
+                                {
+                                    sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveOutOrderId.ToString(),
+                                         row[0].ToString(), row[lastColumnIndex].ToString()));
+                                    sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveInOrderId.ToString(),
+                                        row[0].ToString(), row[lastColumnIndex].ToString()));
+                                }
+
                             }
-                            else
-                            {
-                                sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, insertedOrderId.ToString(),
-                                     row[0].ToString(), row[lastColumnIndex].ToString()));
-                            }
+                            Close();
                         }
-                        Close();
                     }
                 }
                 else
@@ -418,6 +383,142 @@ namespace EngineersThesis
         private void OnCancelClick(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private bool CanProductsBeMovedOut(ref Dictionary<String, double> complexProductsToComplete, ref List<String> complexProductsId, 
+            ref Dictionary<String, double> componentsInNeed, ref Dictionary<String, double> ordinaryProductsInNeed)
+        {
+            int lastColumnIndex = dataGrid.Columns.Count - 1;
+            DataSet productsInWarehouse = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProductsInWarehouse(sqlHandler.Database, warehouseName));
+            var complexProducts = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowComplexProductsID(sqlHandler.Database)));
+
+            foreach (DataRowView row in dataGrid.Items)
+            {
+                foreach (var node in complexProducts)
+                {
+                    if (node[0] == row[0].ToString())
+                    {
+                        complexProductsId.Add(node[0].ToString());
+                        bool isProductInWarehouse = false;
+                        foreach (DataRowView productInWarehouseRow in productsInWarehouse.Tables[0].DefaultView)
+                        {
+                            if (productInWarehouseRow[0].ToString() == node[0])
+                            {
+                                isProductInWarehouse = true;
+                                double itemsInWarehouseAfterSell = Convert.ToDouble(productInWarehouseRow[lastColumnIndex].ToString())
+                                    - Convert.ToDouble(row[lastColumnIndex].ToString());
+                                if (itemsInWarehouseAfterSell < 0)
+                                {
+                                    complexProductsToComplete[node[0]] = -itemsInWarehouseAfterSell;
+                                }
+                                break;
+                            }
+                        }
+                        if (isProductInWarehouse == false)
+                        {
+                            complexProductsToComplete[node[0]] = Convert.ToDouble(row[lastColumnIndex].ToString());
+                        }
+                    }
+                }
+            }
+
+            foreach (DataRowView row in dataGrid.Items)
+            {
+                if (!complexProductsId.Contains(row[0].ToString()))
+                {
+                    bool productIsInWarehouse = false;
+                    foreach (DataRowView productInWarehouseRow in productsInWarehouse.Tables[0].DefaultView)
+                    {
+                        if (row[0].ToString() == productInWarehouseRow[0].ToString())
+                        {
+                            productIsInWarehouse = true;
+                            double amountInWarehouse = Convert.ToDouble(productInWarehouseRow[3].ToString());
+                            double amountToDelete = Convert.ToDouble(row[lastColumnIndex].ToString());
+                            if (amountInWarehouse - amountToDelete < 0)
+                            {
+                                MessageBox.Show("Za mało przedmiotów w magazynie by sprzedać produkt");
+                                return false;
+                            }
+                            else
+                            {
+                                bool result = ordinaryProductsInNeed.TryGetValue(row[0].ToString(), out double sth);
+                                if (!result)
+                                {
+                                    ordinaryProductsInNeed.Add(row[0].ToString(), 0);
+                                }
+                                ordinaryProductsInNeed[row[0].ToString()] += amountToDelete;
+                            }
+                            break;
+                        }
+                    }
+
+                    if (productIsInWarehouse == false)
+                    {
+                        MessageBox.Show("Za mało przedmiotów w magazynie by sprzedać produkt");
+                        return false;
+                    }
+                }
+            }
+
+            foreach (var pair in complexProductsToComplete)
+            {
+                var productRecipe = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowComplexProductRecipe(sqlHandler.Database, pair.Key));
+                foreach (DataRowView recipeRow in productRecipe.Tables[0].DefaultView)
+                {
+                    double recipeMultipler = Convert.ToDouble(recipeRow[1].ToString());
+                    foreach (DataRowView row in dataGrid.Items)
+                    {
+                        if (row[0].ToString() == pair.Key)
+                        {
+                            double amountToDelete = Convert.ToDouble(row[lastColumnIndex].ToString()) * recipeMultipler;
+                            if (componentsInNeed.ContainsKey(recipeRow[0].ToString()))
+                            {
+                                componentsInNeed[recipeRow[0].ToString()] += amountToDelete;
+                            }
+                            else
+                            {
+                                componentsInNeed.Add(recipeRow[0].ToString(), amountToDelete);
+                            }
+
+                            if (ordinaryProductsInNeed.ContainsKey(recipeRow[0].ToString()))
+                            {
+                                ordinaryProductsInNeed[recipeRow[0].ToString()] += amountToDelete;
+                            }
+                            else
+                            {
+                                ordinaryProductsInNeed.Add(recipeRow[0].ToString(), amountToDelete);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                foreach (DataRowView recipeRow in productRecipe.Tables[0].DefaultView)
+                {
+                    bool componentIsInWarehouse = false;
+                    foreach (DataRowView productInWarehouseRow in productsInWarehouse.Tables[0].DefaultView)
+                    {
+                        if (recipeRow[0].ToString() == productInWarehouseRow[0].ToString())
+                        {
+                            componentIsInWarehouse = true;
+                            double amountInWarehouse = Convert.ToDouble(productInWarehouseRow[3].ToString());
+                            double amountToDelete = ordinaryProductsInNeed[recipeRow[0].ToString()];
+                            if (amountInWarehouse - amountToDelete < 0)
+                            {
+                                MessageBox.Show("Za mało przedmiotów w magazynie by ukończyć transakcję");
+                                return false;
+                            }
+                            break;
+                        }
+                    }
+                    if (componentIsInWarehouse == false)
+                    {
+                        MessageBox.Show("Za mało przedmiotów w magazynie by ukończyć transakcję");
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
 }
