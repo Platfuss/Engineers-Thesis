@@ -29,6 +29,7 @@ namespace EngineersThesis.General
             {"complex", "Złożony"},
             {"number", "Numer" },
             {"ordervalue", "Wartość dokumentu" },
+            {"kind", "Rodzaj dokumentu" },
         };
     }
 }

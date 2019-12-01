@@ -67,6 +67,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="DocumentEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ProductEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -93,6 +97,9 @@
     </Compile>
     <Compile Include="ContractorEditor.xaml.cs">
       <DependentUpon>ContractorEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DocumentEditor.xaml.cs">
+      <DependentUpon>DocumentEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="General\SqlCommands.cs" />
     <Compile Include="General\SqlConstants.cs" />

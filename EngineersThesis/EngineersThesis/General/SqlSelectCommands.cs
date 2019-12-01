@@ -13,9 +13,24 @@ namespace EngineersThesis.General
             return $"SELECT short, name FROM `{database}`.`warehouses` ORDER BY short;";
         }
 
+        public static String ShowWarehouseNameToId(String database, String name)
+        {
+            return $"SELECT id FROM `{database}`.`warehouses` WHERE name = '{name}';";
+        }
+
         public static String ShowProducts(String database)
         {
             return $"SELECT id, name, unit, tax, price_buy, price_sell FROM `{database}`.`products` ORDER BY name;";
+        }
+
+        public static String CheckIfProductIdIsInWarehouse(String warehouseId, String productId)
+        {
+            return $"SELECT product_id FROM warehouses_products WHERE warehouse_id = '{warehouseId}' AND product_id = '{productId}' GROUP BY product_id;";
+        }
+
+        public static String ShowProductsName(String database)
+        {
+            return $"SELECT id, name FROM `{database}`.`products` ORDER BY name;";
         }
 
         public static String ShowProductsWithFollowingEmpty(String database, String columnName)
@@ -26,6 +41,11 @@ namespace EngineersThesis.General
         public static String ShowProductsWithFollowingZero(String database)
         {
             return $"SELECT id, name, unit, tax, price_buy, price_sell, '0' AS amount FROM `{database}`.`products` ORDER BY name;";
+        }
+
+        public static String ShowProductsWithFollowingZeroForID(String database, String id)
+        {
+            return $"SELECT id, name, unit, tax, price_buy, price_sell, '0' AS amount FROM `{database}`.`products` WHERE id = '{id}' ORDER BY name;";
         }
 
         public static String ShowProductReversedComponents(String database, String complexProduct, String componentProduct)
@@ -54,7 +74,8 @@ namespace EngineersThesis.General
                 $"FROM `{database}`.`warehouses` w " +
                 $"INNER JOIN `{database}`.`warehouses_products` w_p ON w.id = w_p.warehouse_id " +
                 $"INNER JOIN `{database}`.`products` p              ON p.ID = w_p.product_id " +
-                $"AND w.name = '{warehouseName}';";
+                $"AND w.name = '{warehouseName}'" +
+                $"WHERE amount > 0;";
         }
 
         public static String ShowContractors(String database)
@@ -62,20 +83,30 @@ namespace EngineersThesis.General
             return $"SELECT * FROM `{database}`.`contractors` WHERE id <> 0;";
         }
 
-        public static String ShowOrders(String database)
+        public static String ShowOrders(String database, String warehouseId)
         {
-            return "SELECT o.date, o.number, c.name, IF(o.purchase_sell, sum(p.PRICE_BUY) * amount, sum(p.PRICE_SELL) * amount) as orderValue " +
-                "FROM orders o " +
-                "INNER JOIN order_details o_d   ON o.id = o_d.order_id " +
-                "INNER JOIN contractors c       ON o.contractor_id = c.id " +
-                "INNER JOIN products p          ON o_d.product_id = p.id " +
-                "HAVING orderValue IS NOT NULL " +
-                "ORDER BY date;";
+            return $"SELECT DATE_FORMAT(o.date, '%Y-%m-%d') as date, o.number, o.kind, c.name, IF(o.purchase_sell, sum(p.PRICE_SELL) * amount, sum(p.PRICE_BUY) * amount) as orderValue " +
+                $"FROM `{database}`.`orders` o " +
+                $"INNER JOIN `{database}`.`order_details` o_d   ON o.id = o_d.order_id " +
+                $"INNER JOIN `{database}`.`contractors` c       ON o.contractor_id = c.id " +
+                $"INNER JOIN `{database}`.`products` p          ON o_d.product_id = p.id " +
+                $"WHERE o.warehouse_id = '{warehouseId}' " +
+                $"GROUP BY o.number " +
+                $"HAVING orderValue IS NOT NULL " +
+                $"ORDER BY date DESC, o.number DESC;";
         }
 
         public static String ShowMyCompanyData(String database)
         {
             return $"SELECT * FROM `{database}`.`contractors` WHERE id = 0";
         }
+
+        public static String ShowLastDocumentNumber(String database, String year)
+        {
+            return $"SELECT MAX(SUBSTRING_INDEX(number, '/', 1)) FROM `{database}`.`orders` " +
+                $"WHERE YEAR(date) = YEAR('{year}');";
+        }
+
+        //public static String ShowWasProductInWarehouse(String database, String )
     }
 }

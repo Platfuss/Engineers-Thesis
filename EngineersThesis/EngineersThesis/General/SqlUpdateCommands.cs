@@ -23,5 +23,10 @@ namespace EngineersThesis.General
             return $"UPDATE `{database}`.`contractors` SET name = '{name}', street = '{street}', city = '{city}', postal_code = '{postalCode}', " +
                 $"tax_code = '{taxCode}' WHERE id = '{id}';";
         }
+
+        public static String UpdateProductToWarehouse(String warehouseID, String productId, String amount)
+        {
+            return $"UPDATE `warehouses_products` SET amount = amount + '{amount}' WHERE warehouse_id = '{warehouseID}' AND product_id = '{productId}';";
+        }
     }
 }

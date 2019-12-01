@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EngineersThesis"
         mc:Ignorable="d"
-        Title="Ekran logowania" Height="300" Width="400" WindowStartupLocation="CenterOwner" ResizeMode="CanMinimize" KeyDown="Window_KeyDown">
+        Title="Ekran logowania" Height="300" Width="400" WindowStartupLocation="CenterOwner" ResizeMode="CanMinimize" KeyDown="Window_KeyDown" Closing="OnWindowClosing">
     <Grid>
         <Grid x:Name="mainGrid">
             <Grid.ColumnDefinitions>

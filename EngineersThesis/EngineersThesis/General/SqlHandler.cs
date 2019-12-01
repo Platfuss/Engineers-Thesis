@@ -102,14 +102,19 @@ namespace EngineersThesis.General
         {
             if (Database != null && Database != "")
             {
-                ExecuteCommand(SqlCommands.AllowDiactricMarksCommand(Database));
-                ExecuteCommand(SqlCreateTableCommands.WarehousesTable(Database));
-                ExecuteCommand(SqlCreateTableCommands.ProductsTable(Database));
-                ExecuteCommand(SqlCreateTableCommands.ComplexProductComponentsTable(Database));
-                ExecuteCommand(SqlCreateTableCommands.WarehousesProducts(Database));
-                ExecuteCommand(SqlCreateTableCommands.ContractorsTable(Database));
-                ExecuteCommand(SqlCreateTableCommands.OrdersTable(Database));
-                ExecuteCommand(SqlCreateTableCommands.OrderDetailsTable(Database));
+                ExecuteNonQuery(SqlCommands.AllowDiactricMarksCommand(Database));
+                ExecuteNonQuery(SqlCreateTableCommands.WarehousesTable());
+                ExecuteNonQuery(SqlCreateTableCommands.ProductsTable());
+                ExecuteNonQuery(SqlCreateTableCommands.ComplexProductComponentsTable());
+                ExecuteNonQuery(SqlCreateTableCommands.WarehousesProducts());
+                ExecuteNonQuery(SqlCreateTableCommands.ContractorsTable());
+                ExecuteNonQuery(SqlCreateTableCommands.OrdersTable());
+                ExecuteNonQuery(SqlCreateTableCommands.OrderDetailsTable());
+                var script = new MySqlScript(connection, SqlCreateTableCommands.CreateUpdateWarehousesProductTrigger())
+                {
+                    Delimiter = "$$"
+                };
+                script.Execute();
             }
         }
 

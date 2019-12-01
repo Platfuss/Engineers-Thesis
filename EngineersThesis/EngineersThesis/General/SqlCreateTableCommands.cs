@@ -8,18 +8,18 @@ namespace EngineersThesis.General
 {
     class SqlCreateTableCommands
     {
-        public static String WarehousesTable(String database)
+        public static String WarehousesTable()
         {
-            return $"CREATE TABLE IF NOT EXISTS `{database}`.`warehouses` (" +
+            return $"CREATE TABLE IF NOT EXISTS `warehouses` (" +
                 $"ID int PRIMARY KEY AUTO_INCREMENT," +
                 $"SHORT varchar(4) NOT NULL UNIQUE," +
                 $"NAME varchar(20) NOT NULL UNIQUE" +
                 $");";
         }
 
-        public static String ProductsTable(String database)
+        public static String ProductsTable()
         {
-            return $"CREATE TABLE IF NOT EXISTS `{database}`.`products` (" +
+            return $"CREATE TABLE IF NOT EXISTS `products` (" +
                 $"ID int PRIMARY KEY AUTO_INCREMENT," +
                 $"NAME varchar(255) UNIQUE NOT NULL," +
                 $"UNIT varchar(5) NOT NULL," +
@@ -29,33 +29,33 @@ namespace EngineersThesis.General
                 $");";
         }
 
-        public static String ComplexProductComponentsTable(String database)
+        public static String ComplexProductComponentsTable()
         {
-            return $"CREATE TABLE IF NOT EXISTS `{database}`.`components` (" +
+            return $"CREATE TABLE IF NOT EXISTS `components` (" +
                 $"ID_COMPLEX int NOT NULL," +
                 $"ID_COMPONENT int NOT NULL," +
                 $"AMOUNT double NOT NULL," +
                 $"PRIMARY KEY (ID_COMPLEX, ID_COMPONENT)," +
-                $"FOREIGN KEY (ID_COMPLEX) REFERENCES `{database}`.`products`(ID) ON DELETE CASCADE," +
-                $"FOREIGN KEY (ID_COMPONENT) REFERENCES `{database}`.`products`(ID) ON DELETE CASCADE" +
+                $"FOREIGN KEY (ID_COMPLEX) REFERENCES `products`(ID) ON DELETE CASCADE," +
+                $"FOREIGN KEY (ID_COMPONENT) REFERENCES `products`(ID) ON DELETE CASCADE" +
                 $");";
         }
 
-        public static String WarehousesProducts(String database)
+        public static String WarehousesProducts()
         {
-            return $"CREATE TABLE IF NOT EXISTS `{database}`.`warehouses_products` (" +
+            return $"CREATE TABLE IF NOT EXISTS .`warehouses_products` (" +
                 $"WAREHOUSE_ID int NOT NULL," +
                 $"PRODUCT_ID int NOT NULL," +
-                $"AMOUNT double default 0," +
+                $"AMOUNT double CHECK (AMOUNT >= 0)," +
                 $"PRIMARY KEY(WAREHOUSE_ID, PRODUCT_ID)," +
-                $"FOREIGN KEY(WAREHOUSE_ID) REFERENCES `{database}`.`warehouses`(ID) ON DELETE CASCADE," +
-                $"FOREIGN KEY(PRODUCT_ID) REFERENCES `{database}`.`products`(ID) ON DELETE CASCADE" +
+                $"FOREIGN KEY(WAREHOUSE_ID) REFERENCES `warehouses`(ID) ON DELETE CASCADE," +
+                $"FOREIGN KEY(PRODUCT_ID) REFERENCES `products`(ID) ON DELETE CASCADE" +
                 $");";
         }
 
-        public static String ContractorsTable(String database)
+        public static String ContractorsTable()
         {
-            return $"CREATE TABLE IF NOT EXISTS `{database}`.`contractors` (" +
+            return $"CREATE TABLE IF NOT EXISTS `contractors` (" +
                 $"ID int PRIMARY KEY AUTO_INCREMENT," +
                 $"NAME varchar(255) NOT NULL UNIQUE," +
                 $"STREET varchar(255)," +
@@ -65,30 +65,54 @@ namespace EngineersThesis.General
                 $");";
         }
 
-        public static String OrdersTable(String database)
+        public static String OrdersTable()
         {
-            return $"CREATE TABLE IF NOT EXISTS `{database}`.`orders`(" +
+            return $"CREATE TABLE IF NOT EXISTS `orders`(" +
                 $"ID int PRIMARY KEY AUTO_INCREMENT," +
                 $"NUMBER varchar(30) NOT NULL UNIQUE," +
                 $"CONTRACTOR_ID int NOT NULL," +
-                $"WAREHOUSE int NOT NULL," +
+                $"WAREHOUSE_ID int NOT NULL," +
+                $"KIND varchar(5) NOT NULL," +
+                $"PURCHASE_SELL bool," +
                 $"DATE date NOT NULL," +
-                $"PURCHASE_SELL bool NOT NULL," +
-                $"FOREIGN KEY(CONTRACTOR_ID) REFERENCES `{database}`.`contractors`(ID) ON DELETE CASCADE," +
-                $"FOREIGN KEY(WAREHOUSE) REFERENCES `{database}`.`warehouses`(ID) ON DELETE CASCADE" +
+                $"FOREIGN KEY(CONTRACTOR_ID) REFERENCES `contractors`(ID) ON DELETE CASCADE," +
+                $"FOREIGN KEY(WAREHOUSE_ID) REFERENCES `warehouses`(ID) ON DELETE CASCADE" +
                 $");";
         }
 
-        public static String OrderDetailsTable(String database)
+        public static String OrderDetailsTable()
         {
-            return $"CREATE TABLE IF NOT EXISTS `{database}`.`order_details`(" +
-                $"ID int PRIMARY KEY AUTO_INCREMENT," +
+            return $"CREATE TABLE IF NOT EXISTS `order_details`(" +
                 $"ORDER_ID int NOT NULL," +
                 $"PRODUCT_ID int NOT NULL," +
                 $"AMOUNT double NOT NULL," +
-                $"FOREIGN KEY(ORDER_ID) REFERENCES `{database}`.`orders`(ID)ON DELETE CASCADE," +
-                $"FOREIGN KEY(PRODUCT_ID) REFERENCES `{database}`.`products`(ID)ON DELETE CASCADE" +
+                $"PRIMARY KEY(ORDER_ID, PRODUCT_ID)," +
+                $"FOREIGN KEY(ORDER_ID) REFERENCES `orders`(ID)ON DELETE CASCADE," +
+                $"FOREIGN KEY(PRODUCT_ID) REFERENCES `products`(ID)ON DELETE CASCADE" +
                 $");";
+        }
+
+        public static String CreateUpdateWarehousesProductTrigger()
+        {
+            return
+            $"DROP TRIGGER IF EXISTS updateWarehouses;" +
+            $"CREATE TRIGGER updateWarehouses AFTER INSERT ON order_details " +
+            $"FOR EACH ROW " +
+            $"BEGIN " +
+            $"  DECLARE war_id int; " +
+            $"  DECLARE doctype bool; " +
+            $"  SELECT orders.purchase_sell INTO doctype FROM orders INNER JOIN order_details ON order_details.order_id = orders.id WHERE order_details.order_id = new.order_id GROUP BY orders.purchase_sell; " +
+            $"  IF(doctype = '0') THEN " +
+            $"      IF(EXISTS(SELECT product_id FROM warehouses_products w_p WHERE w_p.PRODUCT_ID = NEW.product_id)) THEN " +
+            $"          UPDATE warehouses_products w_p SET w_p.amount = w_p.amount + new.amount WHERE w_p.product_id = new.product_id; " +
+            $"      ELSE " +
+            $"          SELECT o.warehouse_id INTO war_id FROM orders o INNER JOIN order_details o_d ON o.id = o_d.ORDER_ID WHERE o_d.ORDER_ID = new.order_id GROUP BY o.warehouse_id; " +
+            $"          INSERT INTO warehouses_products(warehouse_id, product_id, amount) VALUES(war_id, new.product_id, new.amount); " +
+            $"      END IF ;" +
+            $"  ELSE " +
+            $"      UPDATE warehouses_products w_p SET w_p.amount = w_p.amount - new.amount WHERE w_p.product_id = new.product_id; " +
+            $"  END IF; " +
+            $"END$$";
         }
     }
 }

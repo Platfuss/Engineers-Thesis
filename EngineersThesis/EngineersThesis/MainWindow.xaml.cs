@@ -45,9 +45,8 @@ namespace EngineersThesis
             if (sqlHandler.Database != null)
             {
                 OpenWarehousesManager(new object(), new RoutedEventArgs());
+                SetDocumentGrid();
             }
-            SetContractorGrid();
-            SetDocumentGrid();
         }
 
         private void ChooseDatabase(object sender, RoutedEventArgs e)
@@ -55,6 +54,15 @@ namespace EngineersThesis
             welcomeScreen.ShowDialog();
             sqlHandler = welcomeScreen.SqlHandler;
             sqlHandler.PrepareDatabase();
+            SetContractorGrid();
+            if(sqlHandler.Database != "" && sqlHandler.Database != null)
+            {
+                OpenWarehousesManagerButton.IsEnabled = companyManageButton.IsEnabled = true;
+            }
+            else
+            {
+                SetButtonsEnability(false);
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -90,8 +98,8 @@ namespace EngineersThesis
             var database = sqlHandler.Database;
             if (database != null)
             {
-
-                var dataSet = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowOrders(sqlHandler.Database));
+                String warehouseId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehouseNameToId(sqlHandler.Database, warehouseName)))[0][0];
+                var dataSet = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowOrders(sqlHandler.Database, warehouseId));
                 dataGridDocuments.ItemsSource = dataSet.Tables[0].DefaultView;
                 foreach (var column in dataGridDocuments.Columns)
                 {
@@ -210,10 +218,37 @@ namespace EngineersThesis
             selectedDocumentRow = dataGridDocuments.SelectedIndex;
         }
 
+        private void OnAddNewDocumentClick(object sender, RoutedEventArgs e)
+        {
+            bool areAnyProducts = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProducts(sqlHandler.Database))).Count > 0;
+            bool areAnyContractors = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowContractors(sqlHandler.Database))).Count > 0;
+            if (areAnyProducts && areAnyContractors)
+            {
+                String documentType = documentCategoryComboBox.Text;
+                var documentEditor = new DocumentEditor(sqlHandler, warehouseName, documentType)
+                {
+                    Owner = this
+                };
+                documentEditor.ShowDialog();
+                SetProductGrid();
+                SetDocumentGrid();
+            }
+            else
+            {
+                MessageBox.Show("W przypadku braku znanych towarów lub kontrahentów, tworzenie dokumentów jest zabronione!", "Błąd", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
+
+        private void OnGeneratePdfClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void SetButtonsEnability(bool isEnabled)
         {
             ManageProductsButton.IsEnabled = addContractorButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled =
-                companyManageButton.IsEnabled = isEnabled;
+                companyManageButton.IsEnabled = newDocumentButton.IsEnabled = documentCategoryComboBox.IsEnabled = isEnabled;
+            documentCategoryComboBox.SelectedIndex = isEnabled ? 0 : -1;
         }
     }
 }

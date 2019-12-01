@@ -144,5 +144,11 @@ namespace EngineersThesis
             Properties.Settings.Default.password = lowerTextBox.Password;
             Properties.Settings.Default.Save();
         }
+
+        private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+            Hide();
+        }
     }
 }
