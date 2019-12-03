@@ -272,7 +272,7 @@ namespace EngineersThesis
                     document.Add(pdfTable);
 
                     document.Add(GetNewLine());
-                    document.Add(new Phrase($"Wartość dokumentu: {netAndGrossValue.ToString()}", boldFont));
+                    document.Add(new Phrase($"Wartość dokumentu: {netAndGrossValue.ToString()} zł", boldFont));
                     document.Add(GetNewLine());
                     document.Add(GetNewLine());
 

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EngineersThesis"
         mc:Ignorable="d"
-        Title="MainWindow" WindowState="Maximized" Closing="Window_Closing" Loaded="Window_Loaded">
+        Title="MainWindow" WindowState="Maximized" Closing="Window_Closing" Loaded="Window_Loaded" Height="997.6" Width="1561">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="2*"/>
@@ -40,8 +40,10 @@
             <Button x:Name="newDocumentButton" DockPanel.Dock="Right" IsEnabled="False" Content="Dodaj" Click="OnAddNewDocumentClick" Width="60"/>
         </DockPanel>
 
-        <DockPanel Grid.Row="3" Grid.Column="1" Margin="10,0,10,0" LastChildFill="False" >
-            <Button x:Name="generatePdfButton" IsEnabled="False" Content="Generuj PDF" Click="OnGeneratePdfClick" Width="75" Margin="0,5"/>
+        <DockPanel Grid.Row="3" Grid.Column="1" Margin="1,0,1,0" LastChildFill="False" >
+            <Button x:Name="generatePdfButton" IsEnabled="False" Content="Generuj PDF" Click="OnGeneratePdfClick" Width="130" Margin="0,5"/>
+            <Separator BorderThickness="2"/>
+            <Button Width="130" Content="Statystyki" Click="OnShowStatisticsButton" Margin="0,5"/>
             <Button x:Name="showDocumentDetailsButton" IsEnabled="False" Content="Szczegóły dokumentu" Click="OnShowDocumentDetails" Width="130" Margin="0,5" DockPanel.Dock="Right"/>
         </DockPanel>
 

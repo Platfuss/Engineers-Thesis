@@ -96,7 +96,8 @@ namespace EngineersThesis.General
         public static String ShowOrders(String database, String warehouseId)
         {
             return
-                $"SELECT DATE_FORMAT(o.date, '%Y-%m-%d') as date, o.number, o.kind, IF(c.name IS NOT NULL, c.name, w.short) as name, IF(o.purchase_sell, sum(p.PRICE_SELL) * amount, sum(p.PRICE_BUY) * amount) as orderValue " +
+                $"SELECT DATE_FORMAT(o.date, '%Y-%m-%d') as date, o.number, o.kind, IF(c.name IS NOT NULL, c.name, w.short) as name, " +
+                $"  ROUND(IF(o.purchase_sell, sum(p.PRICE_SELL * amount * (100+p.tax) / 100), sum(p.PRICE_BUY * amount * (100+p.tax) / 100)), 2) as orderValue " +
                 $"FROM `orders` o " +
                 $"INNER JOIN `order_details` o_d ON o.id = o_d.order_id " +
                 $"LEFT JOIN `contractors` c ON o.contractor_id = c.id " +
@@ -105,7 +106,7 @@ namespace EngineersThesis.General
                 $"WHERE o.warehouse_id = '{warehouseId}' " +
                 $"GROUP BY o.number " +
                 $"HAVING orderValue IS NOT NULL " +
-                $"ORDER BY date DESC, o.number DESC;";
+                $"ORDER BY date DESC, o.number DESC; ";
         }
 
         public static String ShowMyCompanyData(String database)
@@ -167,6 +168,28 @@ namespace EngineersThesis.General
                 $"  WHERE orders.number = '{orderNumber}'" +
                 $") x " +
                 $"GROUP BY x.tax; ";
+        }
+
+        public static String ShowCompanyMoneyChange(String yearStart, String monthStart, String yearStop, String monthStop, String documentKind)
+        {
+            String priceToUse = documentKind == "WZ" ? "price_sell" : "price_buy";
+            return
+                $"SELECT YEAR(orders.date) AS 'year', MONTH(orders.date) AS 'month', SUM(IF(orders.kind = '{documentKind}', products.{priceToUse} * ord_det.amount, 0)) AS outcome " +
+                $"FROM orders " +
+                $"INNER JOIN order_details ord_det ON orders.id = ord_det.order_id " +
+                $"INNER JOIN products ON ord_det.product_id = products.id " +
+                $"WHERE DATE(orders.date) >= '{yearStart}-{monthStart}-01' AND DATE(orders.date) <= LAST_DAY('{yearStop}-{monthStop}-01') " +
+                $"GROUP BY YEAR(orders.date), MONTH(orders.date);";
+        }
+
+        public static String ShowPopularProducts(String yearStart, String monthStart, String yearStop, String monthStop)
+        {
+            return 
+                $"SELECT products.name, COUNT(products.name) FROM products " +
+                $"INNER JOIN order_details ON products.id = order_details.product_id " +
+                $"INNER JOIN orders ON order_details.order_id = orders.id " +
+                $"WHERE DATE(orders.date) >= '{yearStart}-{monthStart}-01' AND DATE(orders.date) <= LAST_DAY('{yearStop}-{monthStop}-01')  " +
+                $"GROUP BY products.name;";
         }
     }
 }

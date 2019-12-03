@@ -450,7 +450,7 @@ namespace EngineersThesis
                             if (productInWarehouseRow[0].ToString() == node[0])
                             {
                                 isProductInWarehouse = true;
-                                double itemsInWarehouseAfterSell = Convert.ToDouble(productInWarehouseRow[lastColumnIndex].ToString())
+                                double itemsInWarehouseAfterSell = Convert.ToDouble(productInWarehouseRow[3].ToString())
                                     - Convert.ToDouble(row[lastColumnIndex].ToString());
                                 if (itemsInWarehouseAfterSell < 0)
                                 {

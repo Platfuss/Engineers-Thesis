@@ -244,9 +244,28 @@ namespace EngineersThesis
 
         private void OnGeneratePdfClick(object sender, RoutedEventArgs e)
         {
-            var pdfGenerator = new PdfGenerator(sqlHandler, (DataRowView)dataGridDocuments.Items[dataGridDocuments.SelectedIndex], warehouseName);
-            pdfGenerator.ExportToPdf();
+            var info = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowMyCompanyData(sqlHandler.Database)));
+            bool noCompany = false;
+            if (info.Count > 0)
+            {
+                if(info[0].Count > 0)
+                {
+                    if (info[0][0] != "" && info[0][0] != null)
+                    {
+                        var pdfGenerator = new PdfGenerator(sqlHandler, (DataRowView)dataGridDocuments.Items[dataGridDocuments.SelectedIndex], warehouseName);
+                        pdfGenerator.ExportToPdf();
+                    }
+                    else
+                        noCompany = true;
+                }
+                else
+                    noCompany = true;
+            }
+            else
+                noCompany = true;
 
+            if (noCompany)
+                MessageBox.Show("Wprowadź informacje o firmie");
         }
 
         private void OnShowDocumentDetails(object sender, RoutedEventArgs e)
@@ -261,11 +280,22 @@ namespace EngineersThesis
             SetDocumentGrid();
         }
 
+
         private void SetButtonsEnability(bool isEnabled)
         {
             ManageProductsButton.IsEnabled = addContractorButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled =
                 companyManageButton.IsEnabled = newDocumentButton.IsEnabled = documentCategoryComboBox.IsEnabled = isEnabled;
             documentCategoryComboBox.SelectedIndex = isEnabled ? 0 : -1;
+        }
+
+        private void OnShowStatisticsButton(object sender, RoutedEventArgs e)
+        {
+            var statistics = new Statistics(sqlHandler)
+            {
+                Owner = this
+            };
+            statistics.ShowDialog();
+
         }
     }
 }

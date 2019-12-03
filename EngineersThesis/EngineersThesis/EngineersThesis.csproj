@@ -54,6 +54,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Controls.DataVisualization.Toolkit, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Controls.DataVisualization.Toolkit.4.0.0.0\lib\net40-Client\System.Windows.Controls.DataVisualization.Toolkit.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -88,6 +91,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ProductEditorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Statistics.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -127,6 +134,9 @@
     </Compile>
     <Compile Include="ProductEditorControl.xaml.cs">
       <DependentUpon>ProductEditorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Statistics.xaml.cs">
+      <DependentUpon>Statistics.xaml</DependentUpon>
     </Compile>
     <Compile Include="WarehousesManager.xaml.cs">
       <DependentUpon>WarehousesManager.xaml</DependentUpon>
