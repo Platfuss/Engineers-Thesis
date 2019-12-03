@@ -290,7 +290,7 @@ namespace EngineersThesis
                         if (dataValidate && list.Count > 0)
                         {
                             bool added = sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertNewProduct(sqlHandler.Database, nameTextBox.Text, unitText, priceBuy, priceSell, taxComboBoxText));
-                            if (added) //ToDo check
+                            if (added)
                             {
                                 var result = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "products")));
                                 var lastId = result[0][0];
@@ -322,11 +322,11 @@ namespace EngineersThesis
                     var cellContent = row[row.Row.Table.Columns.Count - 1].ToString();
                     if (cellContent == "")
                         row[row.Row.Table.Columns.Count - 1] = cellContent = "0";
+                    cellContent = Regex.Replace(cellContent, @"\.", ",");
                     var amount = Convert.ToDouble(cellContent);
                     if (amount > 0)
                     {
-                        var amountString = Regex.Replace(amount.ToString(), @"\.", ",");
-                        list.Add(new Tuple<string, string>(row[0].ToString(), amountString));
+                        list.Add(new Tuple<string, string>(row[0].ToString(), Regex.Replace(amount.ToString(), ",", @"\.")));
                     }
                 }
                 catch (Exception)

@@ -143,5 +143,30 @@ namespace EngineersThesis.General
             return $"SELECT short, name FROM warehouses " +
                 $"INNER JOIN orders ON warehouses.id = orders.warehouse_move_id WHERE orders.number = '{orderNumber}'";
         }
+
+        public static String ShowOrderFullInfo(String orderNumber)
+        {
+            return $"SELECT p.name, p.unit, or_det.amount, @net_price:=if(orders.purchase_sell, p.price_sell, p.price_buy) AS net_price, @net_sum:=(@net_price * or_det.amount) AS net_worth, " +
+                $"p.tax, @gross:=(@net_sum * p.tax / 100) AS gross,  (@gross + @net_sum) AS net_and_gross " +
+                $"FROM products p " +
+                $"INNER JOIN order_details or_det ON or_det.PRODUCT_ID = p.id " +
+                $"INNER JOIN orders ON or_det.ORDER_ID = orders.id " +
+                $"WHERE orders.number = '{orderNumber}' " +
+                $"ORDER BY p.name;";
+        }
+
+        public static String ShowOrderSumUp(String orderNumber)
+        {
+            return
+                $"SELECT @first:=SUM(x.net_price) AS net, x.tax AS percent_sign, @second:=SUM((x.net_price * x.tax / 100)) AS tax, (@first + @second) as result " +
+                $"FROM  " +
+                $"( " +
+                $"  SELECT IF (orders.purchase_sell, p.price_sell, p.price_buy) * or_det.amount AS net_price, p.tax AS tax" +
+                $"  FROM orders INNER JOIN order_details or_det ON or_det.order_id = orders.id " +
+                $"  INNER JOIN products p ON or_det.product_id = p.id " +
+                $"  WHERE orders.number = '{orderNumber}'" +
+                $") x " +
+                $"GROUP BY x.tax; ";
+        }
     }
 }

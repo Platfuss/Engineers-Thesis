@@ -218,7 +218,7 @@ namespace EngineersThesis
         private void OnDocumentGridSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             selectedDocumentRow = dataGridDocuments.SelectedIndex;
-            showDocumentDetailsButton.IsEnabled = selectedDocumentRow > -1;
+            showDocumentDetailsButton.IsEnabled = generatePdfButton.IsEnabled = selectedDocumentRow > -1;
         }
 
         private void OnAddNewDocumentClick(object sender, RoutedEventArgs e)
@@ -244,6 +244,8 @@ namespace EngineersThesis
 
         private void OnGeneratePdfClick(object sender, RoutedEventArgs e)
         {
+            var pdfGenerator = new PdfGenerator(sqlHandler, (DataRowView)dataGridDocuments.Items[dataGridDocuments.SelectedIndex], warehouseName);
+            pdfGenerator.ExportToPdf();
 
         }
 

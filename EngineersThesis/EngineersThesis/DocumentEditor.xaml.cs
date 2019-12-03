@@ -13,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using EngineersThesis.General;
+using System.Text.RegularExpressions;
+
 
 namespace EngineersThesis
 {
@@ -50,6 +52,7 @@ namespace EngineersThesis
             {
                 dataGrid.Visibility = Visibility.Visible;
             }
+
             List<List<String>> sqlExecutionResult = new List<List<string>>();
             var list = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowDocumentHasContractor(row[1].ToString())));
             if (list[0][0] == "yes")
@@ -236,7 +239,8 @@ namespace EngineersThesis
                 bool validated = true;
                 foreach(DataRowView row in dataGrid.Items)
                 {
-                    double lastColumnData = Convert.ToDouble(row[row.Row.Table.Columns.Count - 1]);
+                    var dotToComaNumber = Regex.Replace(row[row.Row.Table.Columns.Count - 1].ToString(), @"\.", ",");
+                    double lastColumnData = Convert.ToDouble(dotToComaNumber);
                     if (lastColumnData.ToString() == "" || lastColumnData.ToString() == "0")
                     {
                         validated = false;

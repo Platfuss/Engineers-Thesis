@@ -20,7 +20,7 @@ namespace EngineersThesis.General
             {"postal_code", "Kod pocztowy" },
             {"date", "Data"},
             {"amount", "Ilość"},
-            {"unit", "Jednostka"},
+            {"unit", "j.m."},
             {"short", "Skrót"},
             {"price_buy", "Zakup netto"},
             {"price_sell", "Sprzedaż netto"},
@@ -30,6 +30,10 @@ namespace EngineersThesis.General
             {"number", "Numer" },
             {"ordervalue", "Wartość dokumentu" },
             {"kind", "Rodzaj dokumentu" },
+            {"net_price", "Cena netto" },
+            {"net_worth", "Wartość netto" },
+            {"gross", "Kwota VAT" },
+            {"net_and_gross", "Wartość brutto" },
         };
     }
 }

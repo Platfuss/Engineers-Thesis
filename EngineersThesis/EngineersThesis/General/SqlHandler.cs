@@ -128,6 +128,7 @@ namespace EngineersThesis.General
                 Database = Database,
                 ConnectionTimeout = timeout,
                 CharacterSet = charset,
+                AllowUserVariables = true,
             };
 
             connection = new MySqlConnection(builder.ToString());
