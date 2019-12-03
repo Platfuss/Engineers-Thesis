@@ -98,6 +98,7 @@ namespace EngineersThesis
                     var companyTaxCode = myCompanyData["tax_code"].ToString();
 
                     DataRowView sqlExecutionResult;
+                    bool isItMoveDocument = false;
                     var list = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowDocumentHasContractor(givenRow[1].ToString())));
                     if (list[0][0] == "yes")
                     {
@@ -105,20 +106,37 @@ namespace EngineersThesis
                     }
                     else
                     {
+                        isItMoveDocument = true;
                         sqlExecutionResult = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehouseDataForOrderNumber(givenRow[1].ToString())).Tables[0].DefaultView[0];
                     }
 
-                    var contractorName = sqlExecutionResult["name"].ToString();
-                    var contractorStreet = sqlExecutionResult["street"].ToString();
-                    var contractorCity = sqlExecutionResult["city"].ToString();
-                    var contractorPostalCode = sqlExecutionResult["postal_code"].ToString();
-                    var contractorTaxCode = sqlExecutionResult["tax_code"].ToString();
+                    if (isItMoveDocument)
+                    {
+                        var warehouseShort = sqlExecutionResult["short"].ToString();
+                        var warehouseName = sqlExecutionResult["name"].ToString();
 
-                    document.Add(FillPdfPTableRow($" ", $"Kontrahent: ", boldFont, italicFont));
-                    document.Add(FillPdfPTableRow($"{companyName}", $"{contractorName}", boldFont, boldFont));
-                    document.Add(FillPdfPTableRow($"{companyStreet}", $"{contractorStreet}", normalFont, normalFont));
-                    document.Add(FillPdfPTableRow($"{companyPostalCode + " " + $"{companyCity}"}", $"{contractorPostalCode}" + " " + $"{contractorCity}", normalFont, normalFont));
-                    document.Add(FillPdfPTableRow($"{companyTaxCode}", $"{contractorTaxCode}", normalFont, normalFont));
+                        var direction = kind[kind.Length - 1].ToString() == "+" ? "Z" : "Do";
+
+                        document.Add(FillPdfPTableRow($" ", $"{direction} magazynu: ", boldFont, italicFont));
+                        document.Add(FillPdfPTableRow($"{companyName}", $"{warehouseName}", boldFont, boldFont));
+                        document.Add(FillPdfPTableRow($"{companyStreet}", $"{warehouseShort}", normalFont, normalFont));
+                        document.Add(FillPdfPTableRow($"{companyPostalCode + " " + $"{companyCity}"}", $" ", normalFont, normalFont));
+                        document.Add(FillPdfPTableRow($"{companyTaxCode}", $" ", normalFont, normalFont));
+                    }
+                    else
+                    {
+                        var contractorName = sqlExecutionResult["name"].ToString();
+                        var contractorStreet = sqlExecutionResult["street"].ToString();
+                        var contractorCity = sqlExecutionResult["city"].ToString();
+                        var contractorPostalCode = sqlExecutionResult["postal_code"].ToString();
+                        var contractorTaxCode = sqlExecutionResult["tax_code"].ToString();
+
+                        document.Add(FillPdfPTableRow($" ", $"Kontrahent: ", boldFont, italicFont));
+                        document.Add(FillPdfPTableRow($"{companyName}", $"{contractorName}", boldFont, boldFont));
+                        document.Add(FillPdfPTableRow($"{companyStreet}", $"{contractorStreet}", normalFont, normalFont));
+                        document.Add(FillPdfPTableRow($"{companyPostalCode + " " + $"{companyCity}"}", $"{contractorPostalCode}" + " " + $"{contractorCity}", normalFont, normalFont));
+                        document.Add(FillPdfPTableRow($"{companyTaxCode}", $"{contractorTaxCode}", normalFont, normalFont));
+                    }
                     document.Add(GetNewLine());
                     document.Add(GetNewLine());
 
