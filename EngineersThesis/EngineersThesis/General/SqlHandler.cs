@@ -16,7 +16,7 @@ namespace EngineersThesis.General
         public String Uid { get; set; }
         public String Password { get; set; }
         private MySqlConnection connection;
-        private const uint timeout = 3;
+        private const uint timeout = 5;
         private const String charset = "utf8";
 
         public SqlHandler() { }

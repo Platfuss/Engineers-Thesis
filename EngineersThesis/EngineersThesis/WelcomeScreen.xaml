@@ -28,12 +28,12 @@
             <PasswordBox x:Name="lowerTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="120" PasswordChar="*" Grid.Column="1" Grid.Row="2" Height="24" />
             <Button Content="Zaloguj" HorizontalAlignment="Center" Width="75" Click="Button_Click_1" Grid.Column="0" Grid.Row="4" Height="20" VerticalContentAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10"/>
             <Button Content="Anuluj" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="75" Click="Button_Click" Grid.Column="1" Grid.Row="4" Height="20" Margin="0,0,0,10"/>
-            <ComboBox x:Name="databaseSelection" Visibility="Hidden" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Width="190" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+            <ComboBox x:Name="databaseSelection" Visibility="Hidden" HorizontalAlignment="Right" Grid.Row="3" VerticalAlignment="Center" Width="162" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,20,0"/>
             <Label x:Name="databaseSelectionLabel"  Visibility="Hidden" Content="Wybierz bazę" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="3" VerticalContentAlignment="Center" Height="26" Width="87"/>
             <Button x:Name="databasePickButton" Visibility="Hidden" Grid.ColumnSpan="2" Content="Wybierz" HorizontalAlignment="Center" Margin="0,0,0,10" Grid.Row="4" Grid.Column="0" VerticalAlignment="Bottom" Width="75" Click="DatabasePickButton_Click"/>
-            <Button x:Name="newDatabaseButton" Visibility="Hidden" Content="Dodaj bazę" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Top" Width="75" Click="AddNewBase"/>
+            <Button x:Name="newDatabaseButton" Visibility="Hidden" Content="Dodaj bazę" Grid.Column="1" HorizontalAlignment="Right" Grid.Row="4" VerticalAlignment="Top" Width="116" Click="AddNewBase" HorizontalContentAlignment="Center" Margin="0,0,20,0"/>
         </Grid>
-        
+
         <Grid x:Name="newDatabaseGrid" Visibility="Hidden">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>

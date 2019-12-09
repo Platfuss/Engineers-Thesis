@@ -10,7 +10,8 @@ namespace EngineersThesis.General
     {
         public static String WarehousesTable()
         {
-            return "CREATE TABLE IF NOT EXISTS `warehouses` (" +
+            return 
+                "CREATE TABLE IF NOT EXISTS `warehouses` (" +
                 "ID int PRIMARY KEY AUTO_INCREMENT," +
                 "SHORT varchar(4) NOT NULL UNIQUE," +
                 "NAME varchar(20) NOT NULL UNIQUE" +
@@ -19,19 +20,21 @@ namespace EngineersThesis.General
 
         public static String ProductsTable()
         {
-            return "CREATE TABLE IF NOT EXISTS `products` (" +
+            return 
+                "CREATE TABLE IF NOT EXISTS `products` (" +
                 "ID int PRIMARY KEY AUTO_INCREMENT," +
                 "NAME varchar(255) UNIQUE NOT NULL," +
                 "UNIT varchar(5) NOT NULL," +
                 "PRICE_BUY double NOT NULL CHECK(PRICE >= 0)," +
                 "PRICE_SELL double NOT NULL CHECK(PRICE >= 0)," +
-                "TAX int default 0 CHECK (AMOUNT >=0)" +
+                "TAX int DEFAULT 0 CHECK (AMOUNT >=0)" +
                 ");";
         }
 
         public static String ComplexProductComponentsTable()
         {
-            return "CREATE TABLE IF NOT EXISTS `components` (" +
+            return 
+                "CREATE TABLE IF NOT EXISTS `components` (" +
                 "ID_COMPLEX int NOT NULL," +
                 "ID_COMPONENT int NOT NULL," +
                 "AMOUNT double NOT NULL," +
@@ -43,7 +46,8 @@ namespace EngineersThesis.General
 
         public static String WarehousesProducts()
         {
-            return "CREATE TABLE IF NOT EXISTS .`warehouses_products` (" +
+            return 
+                "CREATE TABLE IF NOT EXISTS `warehouses_products` (" +
                 "WAREHOUSE_ID int NOT NULL," +
                 "PRODUCT_ID int NOT NULL," +
                 "AMOUNT double CHECK (AMOUNT >= 0)," +
@@ -55,7 +59,8 @@ namespace EngineersThesis.General
 
         public static String ContractorsTable()
         {
-            return "CREATE TABLE IF NOT EXISTS `contractors` (" +
+            return 
+                "CREATE TABLE IF NOT EXISTS `contractors` (" +
                 "ID int PRIMARY KEY AUTO_INCREMENT," +
                 "NAME varchar(255) NOT NULL UNIQUE," +
                 "STREET varchar(255)," +
@@ -67,7 +72,8 @@ namespace EngineersThesis.General
 
         public static String OrdersTable()
         {
-            return "CREATE TABLE IF NOT EXISTS `orders`(" +
+            return 
+                "CREATE TABLE IF NOT EXISTS `orders`(" +
                 "ID int PRIMARY KEY AUTO_INCREMENT," +
                 "NUMBER varchar(30) NOT NULL UNIQUE," +
                 "CONTRACTOR_ID int," +
@@ -84,7 +90,8 @@ namespace EngineersThesis.General
 
         public static String OrderDetailsTable()
         {
-            return "CREATE TABLE IF NOT EXISTS `order_details`(" +
+            return 
+                "CREATE TABLE IF NOT EXISTS `order_details`(" +
                 "ORDER_ID int NOT NULL," +
                 "PRODUCT_ID int NOT NULL," +
                 "AMOUNT double NOT NULL," +
@@ -93,6 +100,7 @@ namespace EngineersThesis.General
                 "FOREIGN KEY(PRODUCT_ID) REFERENCES `products`(ID)ON DELETE CASCADE" +
                 ");";
         }
+
         public static String CreateUpdateWarehousesProductTrigger()
         {
             return

@@ -97,7 +97,7 @@ namespace EngineersThesis.General
         {
             return
                 $"SELECT DATE_FORMAT(o.date, '%Y-%m-%d') as date, o.number, o.kind, IF(c.name IS NOT NULL, c.name, w.short) as name, " +
-                $"  ROUND(IF(o.purchase_sell, sum(p.PRICE_SELL * amount * (100+p.tax) / 100), sum(p.PRICE_BUY * amount * (100+p.tax) / 100)), 2) as orderValue " +
+                $"ROUND(IF(o.purchase_sell, sum(p.PRICE_SELL * amount * (100+p.tax) / 100), sum(p.PRICE_BUY * amount * (100+p.tax) / 100)), 2) as orderValue " +
                 $"FROM `orders` o " +
                 $"INNER JOIN `order_details` o_d ON o.id = o_d.order_id " +
                 $"LEFT JOIN `contractors` c ON o.contractor_id = c.id " +
@@ -122,7 +122,8 @@ namespace EngineersThesis.General
 
         public static String ShowProductsInDocument(String orderNumber)
         {
-            return $"SELECT p.name, p.unit, p.tax, p.price_buy, p.price_sell, details.amount FROM products p " +
+            return 
+                $"SELECT p.name, p.unit, p.tax, p.price_buy, p.price_sell, details.amount FROM products p " +
                 $"INNER JOIN order_details details ON product_id = p.id " +
                 $"INNER JOIN orders ord ON details.order_id = ord.id " +
                 $"WHERE ord.number = '{orderNumber}';";

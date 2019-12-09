@@ -121,7 +121,7 @@ namespace EngineersThesis
                         document.Add(FillPdfPTableRow($"{companyName}", $"{warehouseName}", boldFont, boldFont));
                         document.Add(FillPdfPTableRow($"{companyStreet}", $"{warehouseShort}", normalFont, normalFont));
                         document.Add(FillPdfPTableRow($"{companyPostalCode + " " + $"{companyCity}"}", $" ", normalFont, normalFont));
-                        document.Add(FillPdfPTableRow($"{companyTaxCode}", $" ", normalFont, normalFont));
+                        document.Add(FillPdfPTableRow($"NIP: {companyTaxCode}", $" ", normalFont, normalFont));
                     }
                     else
                     {
@@ -135,7 +135,7 @@ namespace EngineersThesis
                         document.Add(FillPdfPTableRow($"{companyName}", $"{contractorName}", boldFont, boldFont));
                         document.Add(FillPdfPTableRow($"{companyStreet}", $"{contractorStreet}", normalFont, normalFont));
                         document.Add(FillPdfPTableRow($"{companyPostalCode + " " + $"{companyCity}"}", $"{contractorPostalCode}" + " " + $"{contractorCity}", normalFont, normalFont));
-                        document.Add(FillPdfPTableRow($"{companyTaxCode}", $"{contractorTaxCode}", normalFont, normalFont));
+                        document.Add(FillPdfPTableRow($"NIP: {companyTaxCode}", $"NIP: {contractorTaxCode}", normalFont, normalFont));
                     }
                     document.Add(GetNewLine());
                     document.Add(GetNewLine());

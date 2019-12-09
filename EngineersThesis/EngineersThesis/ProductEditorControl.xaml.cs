@@ -153,11 +153,6 @@ namespace EngineersThesis
             }
         }
 
-        private void OnTabComponentSelected(object sender, RoutedEventArgs e)
-        {
-            SetDataGrid();
-        }
-
         private void OnNetValidation(object sender, TextCompositionEventArgs e)
         {
             var textBox = sender as TextBox;
