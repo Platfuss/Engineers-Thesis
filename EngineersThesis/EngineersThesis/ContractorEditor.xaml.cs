@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using EngineersThesis.General;
+using System.Text.RegularExpressions;
 
 namespace EngineersThesis
 {
@@ -76,23 +77,37 @@ namespace EngineersThesis
         private void OnAcceptClick(object sender, RoutedEventArgs e)
         {
             bool result = false;
-            if (editMode)
+
+            if (!Regex.IsMatch(postalCodeTextBox.Text, @"^\d{2}-\d{3}$"))
             {
-                result = sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateContractor(sqlHandler.Database, givenRow[0].ToString(), nameTextBox.Text, streetTextBox.Text, cityTextBox.Text,
-                    postalCodeTextBox.Text, taxCodeTextBox.Text));
+                MessageBox.Show("Niepoprawny kod pocztowy", "Błąd", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
             }
-            else
+
+            if (CheckTaxCodeValidation(Regex.Replace(taxCodeTextBox.Text, @"[^0-9]*", "")))
             {
-                if (forCompany == false)
+                if (editMode)
                 {
-                    result = sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertContractor(sqlHandler.Database, nameTextBox.Text, streetTextBox.Text, cityTextBox.Text,
+                    result = sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateContractor(sqlHandler.Database, givenRow[0].ToString(), nameTextBox.Text, streetTextBox.Text, cityTextBox.Text,
                         postalCodeTextBox.Text, taxCodeTextBox.Text));
                 }
                 else
                 {
-                    result = sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertMyCompany(sqlHandler.Database, nameTextBox.Text, streetTextBox.Text, cityTextBox.Text,
-                        postalCodeTextBox.Text, taxCodeTextBox.Text));
+                    if (forCompany == false)
+                    {
+                        result = sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertContractor(sqlHandler.Database, nameTextBox.Text, streetTextBox.Text, cityTextBox.Text,
+                            postalCodeTextBox.Text, taxCodeTextBox.Text));
+                    }
+                    else
+                    {
+                        result = sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertMyCompany(sqlHandler.Database, nameTextBox.Text, streetTextBox.Text, cityTextBox.Text,
+                            postalCodeTextBox.Text, taxCodeTextBox.Text));
+                    }
                 }
+            }
+            else
+            {
+                MessageBox.Show("Niepoprawny NIP", "Błąd", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
 
             if (result == true)
@@ -104,6 +119,26 @@ namespace EngineersThesis
         private void OnCancel(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private bool CheckTaxCodeValidation(String taxCode)
+        {
+            bool result = false;
+            if (taxCode.Length == 10)
+            {
+                List<int> weight = new List<int> { 6, 5, 7, 2, 3, 4, 5, 6, 7 };
+                int sum = 0;
+                for (int i = 0; i < weight.Count; i++)
+                {
+                    sum += weight[i] * (int)Char.GetNumericValue(taxCode[i]);
+                }
+
+                if (sum % 11 == (int)Char.GetNumericValue(taxCode[9]))
+                {
+                    result = true;
+                }
+            }
+            return result;
         }
     }
 }

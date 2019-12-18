@@ -66,7 +66,7 @@ namespace EngineersThesis.General
                 "STREET varchar(255)," +
                 "CITY varchar(255)," +
                 "POSTAL_CODE varchar(10)," +
-                "TAX_CODE varchar(15)" +
+                "TAX_CODE varchar(15) UNIQUE" +
                 ");";
         }
 

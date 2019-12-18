@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EngineersThesis"
         mc:Ignorable="d"
-        Title="Widok magazynu" WindowState="Maximized" Closing="Window_Closing" Loaded="Window_Loaded" Height="997.6" Width="1561">
+        Title="Widok magazynu" WindowState="Maximized" Closing="Window_Closing" Loaded="Window_Loaded" MinWidth="1000" MinHeight="700" Height="595" Width="826">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="3*"/>
             <RowDefinition Height="3*"/>
             <RowDefinition Height="50*"/>
         </Grid.RowDefinitions>

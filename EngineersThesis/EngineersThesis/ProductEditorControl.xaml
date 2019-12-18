@@ -79,7 +79,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem x:Name="tabComponent" Header="Składniki" IsEnabled="False">
+            <TabItem x:Name="tabComponent" Header="Składniki" IsEnabled="False" Selector.Selected="OnComponentTabSelected">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="9*"/>

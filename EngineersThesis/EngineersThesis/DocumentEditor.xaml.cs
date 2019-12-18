@@ -306,8 +306,11 @@ namespace EngineersThesis
                                     }
                                     else
                                     {
-                                        sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId,
-                                            row[0].ToString(), row[lastColumnIndex].ToString()));
+                                        if (complexProductsToComplete.ContainsKey(row[0].ToString()))
+                                        {
+                                            sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId,
+                                                row[0].ToString(), complexProductsToComplete[row[0].ToString()].ToString()));
+                                        }
                                     }
                                     sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, insertedOrderId.ToString(),
                                         row[0].ToString(), row[lastColumnIndex].ToString()));
@@ -364,23 +367,13 @@ namespace EngineersThesis
                                     }
                                     else
                                     {
-                                        sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId,
-                                            row[0].ToString(), row[lastColumnIndex].ToString()));
+                                        if (complexProductsToComplete.ContainsKey(row[0].ToString()))
+                                        {
+                                            sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId,
+                                                row[0].ToString(), row[lastColumnIndex].ToString()));
+                                        }
                                     }
 
-                                    isProductInWarehouse = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(
-                                        SqlSelectCommands.CheckIfProductIdIsInWarehouse(warehouseId, row[0].ToString()))).Count == 0;
-
-                                    if (isProductInWarehouse)
-                                    {
-                                        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertProductToWarehouse(contractorIndexToID[contractorComboBox.SelectedIndex], 
-                                            row[0].ToString(), row[lastColumnIndex].ToString()));
-                                    }
-                                    else
-                                    {
-                                        sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(contractorIndexToID[contractorComboBox.SelectedIndex],
-                                            row[0].ToString(), row[lastColumnIndex].ToString()));
-                                    }
                                     sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveOutOrderId.ToString(),
                                         row[0].ToString(), row[lastColumnIndex].ToString()));
                                     sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveInOrderId.ToString(),
@@ -515,7 +508,7 @@ namespace EngineersThesis
                     {
                         if (row[0].ToString() == pair.Key)
                         {
-                            double amountToDelete = Convert.ToDouble(row[lastColumnIndex].ToString()) * recipeMultipler;
+                            double amountToDelete = pair.Value * recipeMultipler;
                             if (componentsInNeed.ContainsKey(recipeRow[0].ToString()))
                             {
                                 componentsInNeed[recipeRow[0].ToString()] += amountToDelete;

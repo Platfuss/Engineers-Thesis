@@ -153,6 +153,11 @@ namespace EngineersThesis
             }
         }
 
+        void OnComponentTabSelected(object sender, RoutedEventArgs e)
+        {
+            SetDataGrid();
+        }
+
         private void OnNetValidation(object sender, TextCompositionEventArgs e)
         {
             var textBox = sender as TextBox;
@@ -226,11 +231,25 @@ namespace EngineersThesis
 
                 if (editMode)
                 {
+                    String productId = givenEditedRow[0].ToString();
+                    List<List<String>> productUsedIn = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProductInUse(productId)));
+                    if (productUsedIn.Count != 0)
+                    {
+                        string message = "Błąd! Produkt został już użyty w następujących dokumentach\n";
+                        foreach (var node in productUsedIn)
+                        {
+                            message += node[0] + ", ";
+                        }
+                        message = message.Remove(message.Length - 2);
+                        MessageBox.Show(message, "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
                     if (wasComplex == false && !(bool)complexProductRadioButton.IsChecked)
                     {
                         sqlHandler.ExecuteCommand(SqlUpdateCommands.UpdateProductInfo(sqlHandler.Database, givenEditedRow[0].ToString(), nameTextBox.Text, unitText, priceBuy, priceSell, taxComboBoxText));
                     }
-                    else if (wasComplex == true && (bool)complexProductRadioButton.IsChecked)
+                    else if (wasComplex == true && !(bool)complexProductRadioButton.IsChecked)
                     {
                         sqlHandler.ExecuteNonQuery(SqlDeleteCommands.DeleteComplexity(sqlHandler.Database, givenEditedRow[0].ToString()));
                         sqlHandler.ExecuteCommand(SqlUpdateCommands.UpdateProductInfo(sqlHandler.Database, givenEditedRow[0].ToString(), nameTextBox.Text, unitText, priceBuy, priceSell, taxComboBoxText));
@@ -257,7 +276,7 @@ namespace EngineersThesis
                             {
                                 sqlHandler.ExecuteNonQuery(SqlDeleteCommands.DeleteProduct(sqlHandler.Database, givenEditedRow[0].ToString()));
                                 bool added = sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertNewProduct(sqlHandler.Database, nameTextBox.Text, unitText, priceBuy, priceSell, taxComboBoxText));
-                                if (added) //ToDo check
+                                if (added)
                                 {
                                     var result = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "products")));
                                     var lastId = result[0][0];

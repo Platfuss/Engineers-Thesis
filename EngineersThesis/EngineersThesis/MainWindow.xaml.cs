@@ -42,12 +42,6 @@ namespace EngineersThesis
                 Owner = this
             };
             ChooseDatabase(new object(), new RoutedEventArgs());
-            if (sqlHandler.Database != null)
-            {
-                OpenWarehousesManager(new object(), new RoutedEventArgs());
-                if (warehouseName != null && warehouseName != "")
-                    SetDocumentGrid();
-            }
         }
 
         private void ChooseDatabase(object sender, RoutedEventArgs e)
@@ -59,6 +53,9 @@ namespace EngineersThesis
             if(sqlHandler.Database != "" && sqlHandler.Database != null)
             {
                 OpenWarehousesManagerButton.IsEnabled = companyManageButton.IsEnabled = true;
+                OpenWarehousesManager(new object(), new RoutedEventArgs());
+                if (warehouseName != null && warehouseName != "")
+                    SetDocumentGrid();
             }
             else
             {
@@ -178,7 +175,22 @@ namespace EngineersThesis
         {
             if (selectedContractorRow != -1)
             {
-                sqlHandler.ExecuteNonQuery(SqlDeleteCommands.DeleteContractor(sqlHandler.Database, ((DataRowView)dataGridContractors.SelectedItem)[0].ToString()));
+                string contractorId = ((DataRowView)dataGridContractors.SelectedItem)[0].ToString();
+                List<List<String>> contractorUsedIn = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowDocumentWithContractor(contractorId)));
+                if (contractorUsedIn.Count == 0)
+                {
+                    sqlHandler.ExecuteNonQuery(SqlDeleteCommands.DeleteContractor(sqlHandler.Database, contractorId));
+                }
+                else
+                {
+                    string message = "Błąd! Kontrahent został już użyty w następujących dokumentach\n";
+                    foreach (var node in contractorUsedIn)
+                    {
+                        message += node[0] + ", ";
+                    }
+                    message = message.Remove(message.Length - 2);
+                    MessageBox.Show(message, "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             SetContractorGrid();
         }
@@ -238,7 +250,7 @@ namespace EngineersThesis
             }
             else
             {
-                MessageBox.Show("W przypadku braku znanych towarów lub kontrahentów, tworzenie dokumentów jest zabronione!", "Błąd", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show("W przypadku braku znanych towarów lub kontrahentów, tworzenie dokumentów nie jest możliwe!", "Błąd", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

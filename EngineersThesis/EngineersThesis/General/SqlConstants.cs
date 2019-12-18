@@ -8,7 +8,7 @@ namespace EngineersThesis.General
 {
     class SqlConstants
     {
-        public static readonly String[] extraDatabases = { "information_schema", "mysql", "performance_schema" };
+        public static readonly String[] extraDatabases = { "information_schema", "mysql", "performance_schema", "sys" };
         public static readonly String showDatabases = "show databases";
 
         public static readonly Dictionary<String, String> translations = new Dictionary<String, String>()

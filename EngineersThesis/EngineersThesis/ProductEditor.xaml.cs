@@ -35,6 +35,7 @@ namespace EngineersThesis
 
         private void SetDataGrid()
         {
+            editProductFrame.Content = new ProductEditorControl(sqlHandler, SetDataGrid, false);
             var database = sqlHandler.Database;
             if (database != null)
             {
@@ -101,11 +102,26 @@ namespace EngineersThesis
 
         private void OnDeleteProductButton(object sender, RoutedEventArgs e)
         {
-            sqlHandler.ExecuteNonQuery(SqlDeleteCommands.DeleteProduct(sqlHandler.Database, ((DataRowView)dataGrid.SelectedItem)[0].ToString()));
-            Action setDataGrid = SetDataGrid;
-            editProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, false);
-            newProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, true);
-            SetDataGrid();
+            String productId = ((DataRowView)dataGrid.SelectedItem)[0].ToString();
+            List<List<String>> productUsedIn = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProductInUse(productId)));
+            if (productUsedIn.Count == 0)
+            {
+                sqlHandler.ExecuteNonQuery(SqlDeleteCommands.DeleteProduct(sqlHandler.Database, productId));
+                Action setDataGrid = SetDataGrid;
+                editProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, false);
+                newProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, true);
+                SetDataGrid();
+            }
+            else
+            {
+                string message = "Błąd! Produkt został już użyty w następujących dokumentach\n";
+                foreach (var node in productUsedIn)
+                {
+                    message += node[0] + ", ";
+                }
+                message = message.Remove(message.Length - 2);
+                MessageBox.Show(message, "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

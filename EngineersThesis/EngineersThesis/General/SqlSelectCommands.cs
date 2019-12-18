@@ -38,6 +38,16 @@ namespace EngineersThesis.General
             return $"SELECT id, name FROM `{database}`.`products` ORDER BY name;";
         }
 
+        public static String ShowProductInUse(String productId)
+        {
+            return 
+                $"SELECT orders.number " +
+                $"FROM orders " +
+                $"INNER JOIN order_details ON order_details.order_id = orders.id " +
+                $"INNER JOIN products ON order_details.product_id = products.id " +
+                $"WHERE product_id = {productId};";
+        }
+
         public static String ShowProductsWithFollowingEmpty(String database, String columnName)
         {
             return $"SELECT id, name, unit, tax, price_buy, price_sell, '' AS {columnName} FROM `{database}`.`products` ORDER BY name;";
@@ -91,6 +101,11 @@ namespace EngineersThesis.General
         public static String ShowContractors(String database)
         {
             return $"SELECT * FROM `{database}`.`contractors` WHERE id <> 0;";
+        }
+
+        public static String ShowDocumentWithContractor(String contractorId)
+        {
+            return $"SELECT orders.number FROM orders INNER JOIN contractors ON orders.contractor_id = contractors.id WHERE orders.contractor_id = {contractorId};";
         }
 
         public static String ShowOrders(String database, String warehouseId)

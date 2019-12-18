@@ -18,12 +18,12 @@
         <Label Content="Koniec okresu" FontWeight="Bold" FontSize="18" HorizontalAlignment="Right" />
 
         <ComboBox x:Name="comboBox" HorizontalAlignment="Center" VerticalAlignment="Bottom" RenderTransformOrigin="0.143,3" Margin="0,0,0,100" Width="250" Height="30" SelectedIndex="0">
-            <ComboBoxItem Content="Wykres zarobków w danym przedziale"/>
-            <ComboBoxItem Content="Wykres częstości zakupu danego produktu"/>
+            <ComboBoxItem Content="Wykres zarobków"/>
+            <ComboBoxItem Content="Wykres częstości wystąpien danego produktu"/>
         </ComboBox>
         
         <Calendar x:Name="calendarSince" HorizontalAlignment="Left" Margin="30,0,0,0" VerticalAlignment="Bottom" SelectionMode="SingleDate" DisplayMode="Year" TextOptions.TextFormattingMode="Display" DisplayDateChanged="OnCalendarDisplayDateChanged" DisplayModeChanged="OnCalendarModeChanged"/>
-        <Calendar x:Name="calendarTo" HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Bottom" SelectionMode="SingleDate" DisplayMode="Year" TextOptions.TextFormattingMode="Display" DisplayDateChanged="OnCalendarDisplayDateChanged"/>
+        <Calendar x:Name="calendarTo" HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Bottom" SelectionMode="SingleDate" DisplayMode="Year" TextOptions.TextFormattingMode="Display" DisplayDateChanged="OnCalendarDisplayDateChanged" DisplayModeChanged="OnCalendarModeChanged"/>
         <Button Content="Generuj" HorizontalAlignment="Center" Height="50" Margin="0,0,0,30" VerticalAlignment="Bottom" Width="116" Click="OnGenerateStatisticsClick"/>
 
         <Grid x:Name="columnGrid" Grid.Row="1" Visibility="Hidden">

@@ -25,7 +25,7 @@ namespace EngineersThesis.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("35.246.184.216")]
         public string ipAddress {
             get {
                 return ((string)(this["ipAddress"]));
@@ -49,7 +49,7 @@ namespace EngineersThesis.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("root")]
         public string password {
             get {
                 return ((string)(this["password"]));
