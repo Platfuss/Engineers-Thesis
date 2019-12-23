@@ -56,9 +56,29 @@ namespace EngineersThesis.General
                 $"('{number}', '{warehouse_id}', '{warehouse_move_id}', '{kind}', '{purcharse_sell}', '{date}')";
         }
 
-        public static String InsertOrderDetails (String database, String order_id, String product_id, String amount)
+        public static String InsertOrderDetails (String database, String order_id, String product_id, String amount, String price = "")
         {
-            return $"INSERT INTO `{database}`.`order_details` (order_id, product_id, amount) VALUES ('{order_id}', '{product_id}', '{amount}');";
+            String result;
+            if (price.Length > 0)
+            {
+                result = $"INSERT INTO `{database}`.`order_details` (order_id, product_id, amount, leftover, price) VALUES ('{order_id}', '{product_id}', '{amount}', '{amount}', '{price}');";
+            }
+            else
+            {
+                result = $"INSERT INTO `{database}`.`order_details` (order_id, product_id, amount) VALUES ('{order_id}', '{product_id}', '{amount}');";
+            }
+            return result;
+        }
+
+        public static String InsertDetailsForOutOrders(String order_id, String buyOrder, String productId, String amount, String price)
+        {
+            return
+                $"INSERT INTO order_details (order_id, buy_order_id, product_id, amount, price) VALUES ('{order_id}', '{buyOrder}', '{productId}', '{amount}', '{price}')";
+        }
+
+        public static String InsertSettings(String setting)
+        {
+            return $"INSERT IGNORE settings (ID, VALUE) VALUES ('1', {setting})";
         }
     }
 }

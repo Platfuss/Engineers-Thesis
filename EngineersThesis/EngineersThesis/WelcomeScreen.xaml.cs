@@ -22,6 +22,7 @@ namespace EngineersThesis
     public partial class WelcomeScreen : Window
     {
         public SqlHandler SqlHandler { get; private set; }
+        public String LifoOrFifo { get; private set; }
         private String server;
         private String uid;
         private String password;
@@ -115,7 +116,9 @@ namespace EngineersThesis
                 var names = SqlHandler.DataSetToList(SqlHandler.ExecuteCommand(SqlCommands.IfDatabaseAlreadyExistCommand(newBaseTextBox.Text)));
                 if (names.Count == 0)
                 {
-                    SqlHandler.ExecuteCommand(SqlCommands.NewDatabaseCommand(newBaseTextBox.Text));
+                    String databaseName = newBaseTextBox.Text;
+                    SqlHandler.ExecuteCommand(SqlCommands.NewDatabaseCommand(databaseName));
+                    LifoOrFifo = lifoButton.IsChecked == true ? "0" : "1";
                     newDatabaseGrid.Visibility = Visibility.Hidden;
                     mainGrid.Visibility = Visibility.Visible;
                     Button_Click_1(new object(), new RoutedEventArgs());

@@ -46,8 +46,8 @@
             <Label Content="Skrót" Grid.Row="1" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
             <TextBox x:Name="centerTextBox"  Grid.Column="1" Grid.Row="1" Margin="10,0,10,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center" MaxLines="1" MaxLength="4" TextChanged="OnTextBoxChange"/>
 
-            <Button x:Name="confirmEditingButton" Click="ConfirmChoice" Content="Akceptuj" Grid.Row="3" HorizontalAlignment="Left" MinWidth="75" Margin="10,4,10,4" IsEnabled="False"/>
-            <Button Content="Zakończ" Grid.Row="3" Grid.Column="1" Margin="10,4,10,4" HorizontalAlignment="Right" MinWidth="75" Click="ClickExit"/>
+            <Button x:Name="confirmEditingButton" Click="ConfirmChoice" Content="Zatwierdź" Grid.Row="3" HorizontalAlignment="Left" MinWidth="75" Margin="10,4,10,4" IsEnabled="False"/>
+            <Button Content="Anuluj" Grid.Row="3" Grid.Column="1" Margin="10,4,10,4" HorizontalAlignment="Right" MinWidth="75" Click="ClickExit"/>
         </Grid>
     </Grid>
 </Window>

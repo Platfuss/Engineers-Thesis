@@ -28,5 +28,14 @@ namespace EngineersThesis.General
         {
             return $"UPDATE `warehouses_products` SET amount = amount + '{amount}' WHERE warehouse_id = '{warehouseID}' AND product_id = '{productId}';";
         }
+
+        public static String UpdateLeftovers(String orderId, String productId, String newLeftovers)
+        {
+            return
+                $"UPDATE order_details " +
+                $"INNER JOIN orders ON order_id = orders.id " +
+                $"INNER JOIN products ON product_id = products.id " +
+                $"SET leftover = '{newLeftovers}' WHERE product_id = '{productId}' AND order_id = '{orderId}'";
+        }
     }
 }

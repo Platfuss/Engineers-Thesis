@@ -103,6 +103,7 @@ namespace EngineersThesis.General
             if (Database != null && Database != "")
             {
                 ExecuteNonQuery(SqlCommands.AllowDiactricMarksCommand(Database));
+                ExecuteNonQuery(SqlCreateTableCommands.SettingsTable());
                 ExecuteNonQuery(SqlCreateTableCommands.WarehousesTable());
                 ExecuteNonQuery(SqlCreateTableCommands.ProductsTable());
                 ExecuteNonQuery(SqlCreateTableCommands.ComplexProductComponentsTable());

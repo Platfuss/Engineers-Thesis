@@ -63,9 +63,18 @@ namespace EngineersThesis.General
             return $"SELECT id, name, unit, tax, price_buy, price_sell, '0' AS amount FROM `{database}`.`products` WHERE NOT EXISTS(SELECT id_complex FROM components where id = id_complex) ORDER BY name;";
         }
 
-        public static String ShowProductsWithFollowingZeroForID(String database, String id)
+        public static String ShowProductsWithFollowingZeroForID(String database, String id, bool mode)
         {
-            return $"SELECT id, name, unit, tax, price_buy, price_sell, '0' AS amount FROM `{database}`.`products` WHERE id = '{id}' ORDER BY name;";
+            String result;
+            if (mode == false)
+            {
+                result = $"SELECT id, name, unit, price_buy, '0' AS amount FROM `{database}`.`products` WHERE id = '{id}' ORDER BY name;";
+            }
+            else
+            {
+                result = $"SELECT id, name, unit, '0' AS amount FROM `{database}`.`products` WHERE id = '{id}' ORDER BY name;";
+            }
+            return result;
         }
 
         public static String ShowProductReversedComponents(String database, String complexProduct, String componentProduct)
@@ -206,6 +215,24 @@ namespace EngineersThesis.General
                 $"INNER JOIN orders ON order_details.order_id = orders.id " +
                 $"WHERE DATE(orders.date) >= '{yearStart}-{monthStart}-01' AND DATE(orders.date) <= LAST_DAY('{yearStop}-{monthStop}-01')  " +
                 $"GROUP BY products.name;";
+        }
+
+        public static String GetStrategy()
+        {
+            return "SELECT value FROM settings WHERE id = 1";
+        }
+
+        public static String GetProductFromOrders(String productId, String warehouseId, String fifoOrLifo)
+        {
+            String order = fifoOrLifo == "0" ? "asc" : "desc";
+            return
+                $"SELECT order_id, leftover, price " +
+                $"FROM order_details " +
+                $"INNER JOIN orders ON order_id = orders.id " +
+                $"INNER JOIN warehouses ON warehouse_id = warehouses.id " +
+                $"INNER JOIN products ON products.id = product_id " +
+                $"WHERE product_id = '{productId}' AND warehouse_id = '{warehouseId}' AND leftover > 0 " +
+                $"ORDER BY orders.date {order}, orders.id {order};";
         }
     }
 }

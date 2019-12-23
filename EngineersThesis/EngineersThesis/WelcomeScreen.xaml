@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Ekran logowania" Height="300" Width="400" WindowStartupLocation="CenterOwner" ResizeMode="CanMinimize" KeyDown="Window_KeyDown" Closing="OnWindowClosing">
     <Grid>
-        <Grid x:Name="mainGrid">
+        <Grid x:Name="mainGrid" Visibility="Visible">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -32,6 +32,7 @@
             <Label x:Name="databaseSelectionLabel"  Visibility="Hidden" Content="Wybierz bazę" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="3" VerticalContentAlignment="Center" Height="26" Width="87"/>
             <Button x:Name="databasePickButton" Visibility="Hidden" Grid.ColumnSpan="2" Content="Wybierz" HorizontalAlignment="Center" Margin="0,0,0,10" Grid.Row="4" Grid.Column="0" VerticalAlignment="Bottom" Width="75" Click="DatabasePickButton_Click"/>
             <Button x:Name="newDatabaseButton" Visibility="Hidden" Content="Dodaj bazę" Grid.Column="1" HorizontalAlignment="Right" Grid.Row="4" VerticalAlignment="Top" Width="116" Click="AddNewBase" HorizontalContentAlignment="Center" Margin="0,0,20,0"/>
+
         </Grid>
 
         <Grid x:Name="newDatabaseGrid" Visibility="Hidden">
@@ -45,7 +46,9 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
-
+            <Label Content="Strategia usuwania towarów" HorizontalAlignment="Left" Grid.Row="1" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
+            <RadioButton x:Name="fifoButton" Content="FIFO" IsChecked="True" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+            <RadioButton x:Name="lifoButton" Content="LIFO" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,20,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
             <Label Content="Nazwa bazy" HorizontalAlignment="Left" VerticalAlignment="Center" Width="122" VerticalContentAlignment="Center" Height="26"/>
             <TextBox x:Name="newBaseTextBox" HorizontalAlignment="Center" Height="22" TextWrapping="Wrap" VerticalAlignment="Center" Width="170" Grid.Column="1" Grid.Row="0"/>
             <Button Content="Dodaj bazę" Width="75" Height="20" Grid.Column="0" Grid.Row="2" Margin="0,0,0,10" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Bottom" Click="ConfirmNewBase"/>

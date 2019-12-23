@@ -8,6 +8,15 @@ namespace EngineersThesis.General
 {
     class SqlCreateTableCommands
     {
+        public static String SettingsTable()
+        {
+            return
+                "CREATE TABLE IF NOT EXISTS `settings` (" +
+                "ID int PRIMARY KEY," +
+                "VALUE int" +
+                ");";
+        }
+
         public static String WarehousesTable()
         {
             return 
@@ -93,9 +102,11 @@ namespace EngineersThesis.General
             return 
                 "CREATE TABLE IF NOT EXISTS `order_details`(" +
                 "ORDER_ID int NOT NULL," +
+                "BUY_ORDER_ID int," +
                 "PRODUCT_ID int NOT NULL," +
                 "AMOUNT double NOT NULL," +
-                "PRIMARY KEY(ORDER_ID, PRODUCT_ID)," +
+                "LEFTOVER double," +
+                "PRICE double NOT NULL," +
                 "FOREIGN KEY(ORDER_ID) REFERENCES `orders`(ID)ON DELETE CASCADE," +
                 "FOREIGN KEY(PRODUCT_ID) REFERENCES `products`(ID)ON DELETE CASCADE" +
                 ");";
