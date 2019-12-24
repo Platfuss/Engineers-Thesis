@@ -23,6 +23,7 @@ namespace EngineersThesis
     {
         public SqlHandler SqlHandler { get; private set; }
         public String LifoOrFifo { get; private set; }
+        public String DateFromat { get; private set; }
         private String server;
         private String uid;
         private String password;
@@ -118,7 +119,8 @@ namespace EngineersThesis
                 {
                     String databaseName = newBaseTextBox.Text;
                     SqlHandler.ExecuteCommand(SqlCommands.NewDatabaseCommand(databaseName));
-                    LifoOrFifo = lifoButton.IsChecked == true ? "0" : "1";
+                    LifoOrFifo = fifoButton.IsChecked == true ? "0" : "1";
+                    DateFromat = monthButton.IsChecked == true ? "0" : "1";
                     newDatabaseGrid.Visibility = Visibility.Hidden;
                     mainGrid.Visibility = Visibility.Visible;
                     Button_Click_1(new object(), new RoutedEventArgs());

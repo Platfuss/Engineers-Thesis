@@ -252,19 +252,16 @@ namespace EngineersThesis
                     }
                 }
 
-                var list = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastDocumentNumber(sqlHandler.Database, datePicker.Text)));
-                int number = 0;
-                if (list[0][0] != null && list[0][0] != "")
-                    number = Convert.ToInt32(list[0][0].ToString());
-                String nextCode = ((++number).ToString()).PadLeft(4, '0') + @"/" + Convert.ToDateTime(datePicker.Text).Year;
+                String nextCode = GetNextCode();
                 String warehouseId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehouseNameToId(sqlHandler.Database, warehouseName)))[0][0];
 
                 if (validated)
                 {
+                    String date = datePicker.SelectedDate.Value.Year.ToString() + "." + datePicker.SelectedDate.Value.Month.ToString() + "." + datePicker.SelectedDate.Value.Day.ToString();
                     if (documentNature == DocumentNature.Buy)
                     {
                         sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrder(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
-                            warehouseId, documentType, "0", datePicker.SelectedDate.ToString()));
+                            warehouseId, documentType, "0", date));
                         String insertedOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
                         foreach(DataRowView row in dataGrid.Items)
                         {
@@ -283,10 +280,10 @@ namespace EngineersThesis
 
                         if (canProductsBeMoved)
                         {
-                            String strategy = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.GetStrategy()))[0][0];
+                            String strategy = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.GetSetting("1")))[0][0];
 
                             sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrder(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
-                                warehouseId, documentType, "1", datePicker.SelectedDate.ToString()));
+                                warehouseId, documentType, "1", date));
                             String insertedOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
 
                             foreach (var toMove in productsToMove)
@@ -330,7 +327,7 @@ namespace EngineersThesis
                             //}
 
                             //sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrder(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
-                            //    warehouseId, documentType, "1", datePicker.SelectedDate.ToString()));
+                            //    warehouseId, documentType, "1", date));
                             //String insertedOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
 
                             //foreach (DataRowView row in dataGrid.Items)
@@ -382,12 +379,12 @@ namespace EngineersThesis
                             //}
 
                             //sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderForMM(sqlHandler.Database, nextCode, warehouseId, 
-                            //    contractorIndexToID[contractorComboBox.SelectedIndex], documentType +"-", "1", datePicker.SelectedDate.ToString()));
+                            //    contractorIndexToID[contractorComboBox.SelectedIndex], documentType +"-", "1", date));
                             //String moveOutOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
 
-                            //nextCode = ((++number).ToString()).PadLeft(4, '0') + @"/" + Convert.ToDateTime(datePicker.Text).Year;
+                            //nextCode = GetNextCode();
                             //sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderForMM(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
-                            //    warehouseId, documentType+"+", "0", datePicker.SelectedDate.ToString()));
+                            //    warehouseId, documentType+"+", "0", date));
                             //String moveInOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
 
                             //foreach (DataRowView row in dataGrid.Items)
@@ -497,6 +494,34 @@ namespace EngineersThesis
             }
 
             return true;
+        }
+
+        private String GetNextCode()
+        {
+            var warehouseData = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehousesForGivenField("name", warehouseName)))[0];
+            String warehouseShort = warehouseData[1];
+            String warehouseId = warehouseData[0];
+            String nextCode = "";
+            var dateFormatSetting = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.GetSetting("2")))[0][0];
+            String date = $@"{Convert.ToDateTime(datePicker.Text).Year}.{Convert.ToDateTime(datePicker.Text).Month}.{Convert.ToDateTime(datePicker.Text).Day}";
+            var list = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastDocumentNumber(date, warehouseId, documentType, dateFormatSetting)));
+            int number = 0;
+            if (list[0][0] != null && list[0][0] != "")
+                number = Convert.ToInt32(list[0][0].ToString());
+
+            String endingString = $@"/{Convert.ToDateTime(datePicker.Text).Year}/{documentType}/{warehouseShort}";
+
+            if (dateFormatSetting == "0")
+            {
+                nextCode = (++number).ToString() + @"/" + Convert.ToDateTime(datePicker.Text).Month;
+            }
+            else
+            {
+                nextCode = (++number).ToString();
+            }
+            nextCode += endingString;
+
+            return nextCode;
         }
     }
 }

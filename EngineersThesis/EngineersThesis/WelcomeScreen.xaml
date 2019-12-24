@@ -35,25 +35,31 @@
 
         </Grid>
 
-        <Grid x:Name="newDatabaseGrid" Visibility="Hidden">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="2*"/>
-            </Grid.RowDefinitions>
-            <Label Content="Strategia usuwania towarów" HorizontalAlignment="Left" Grid.Row="1" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
-            <RadioButton x:Name="fifoButton" Content="FIFO" IsChecked="True" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <RadioButton x:Name="lifoButton" Content="LIFO" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,20,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-            <Label Content="Nazwa bazy" HorizontalAlignment="Left" VerticalAlignment="Center" Width="122" VerticalContentAlignment="Center" Height="26"/>
+		<Grid x:Name="newDatabaseGrid" Visibility="Hidden">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="2*"/>
+				<RowDefinition Height="2*"/>
+				<RowDefinition Height="2*"/>
+				<RowDefinition Height="3*"/>
+			</Grid.RowDefinitions>
+			<Label Content="Strategia usuwania towarów" HorizontalAlignment="Left" Grid.Row="1" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
+			<Label Content="Format daty dokumentów" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" />
+			<Grid Grid.Column="1" Grid.Row="1">
+				<RadioButton x:Name="fifoButton" Content="FIFO" IsChecked="True" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<RadioButton x:Name="lifoButton" Content="LIFO" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,20,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+			</Grid>
+			<Grid Grid.Column="1" Grid.Row="2">
+				<RadioButton x:Name="monthButton" Content="Miesięczny" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0" IsChecked="True"/>
+				<RadioButton x:Name="yearButton" Content="Roczny" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,20,0"/>
+			</Grid>
+			<Label Content="Nazwa bazy" HorizontalAlignment="Left" VerticalAlignment="Center" Width="122" VerticalContentAlignment="Center" Height="26"/>
             <TextBox x:Name="newBaseTextBox" HorizontalAlignment="Center" Height="22" TextWrapping="Wrap" VerticalAlignment="Center" Width="170" Grid.Column="1" Grid.Row="0"/>
-            <Button Content="Dodaj bazę" Width="75" Height="20" Grid.Column="0" Grid.Row="2" Margin="0,0,0,10" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Bottom" Click="ConfirmNewBase"/>
-            <Button Content="Anuluj" Width="75" Height="20" Grid.Column="1" Grid.Row="2" VerticalAlignment="Bottom" Margin="0,0,0,10" HorizontalAlignment="Center" Click="DontAddNewBase"/>
-
+            <Button Content="Dodaj bazę" Width="75" Height="20" Grid.Column="0" Grid.Row="3" Margin="0,0,0,10" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Bottom" Click="ConfirmNewBase"/>
+            <Button Content="Anuluj" Width="75" Height="20" Grid.Column="1" Grid.Row="3" VerticalAlignment="Bottom" Margin="0,0,0,10" HorizontalAlignment="Center" Click="DontAddNewBase"/>
         </Grid>
     </Grid>
 </Window>

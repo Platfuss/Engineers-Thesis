@@ -50,7 +50,10 @@ namespace EngineersThesis
             sqlHandler = welcomeScreen.SqlHandler;
             sqlHandler.PrepareDatabase();
             if (welcomeScreen.LifoOrFifo != null)
-                sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertSettings(welcomeScreen.LifoOrFifo));
+            {
+                sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertSettings("1", welcomeScreen.LifoOrFifo));
+                sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertSettings("2", welcomeScreen.DateFromat));
+            }
             SetContractorGrid();
             if(sqlHandler.Database != "" && sqlHandler.Database != null)
             {

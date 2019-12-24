@@ -76,9 +76,9 @@ namespace EngineersThesis.General
                 $"INSERT INTO order_details (order_id, buy_order_id, product_id, amount, price) VALUES ('{order_id}', '{buyOrder}', '{productId}', '{amount}', '{price}')";
         }
 
-        public static String InsertSettings(String setting)
+        public static String InsertSettings(String id, String setting)
         {
-            return $"INSERT IGNORE settings (ID, VALUE) VALUES ('1', {setting})";
+            return $"INSERT IGNORE settings (ID, VALUE) VALUES ('{id}', {setting})";
         }
     }
 }

@@ -13,6 +13,11 @@ namespace EngineersThesis.General
             return $"SELECT short, name FROM `{database}`.`warehouses` ORDER BY short;";
         }
 
+        public static String ShowWarehousesForGivenField(String field, String fieldValue)
+        {
+            return $"SELECT id, short, name FROM warehouses WHERE {field} = '{fieldValue}';";
+        }
+
         public static String ShowOtherWarehouses(String database, String thisWarehouseName)
         {
             return $"SELECT id, short, name FROM warehouses WHERE name <> '{thisWarehouseName}' ORDER BY short;";
@@ -138,10 +143,20 @@ namespace EngineersThesis.General
             return $"SELECT * FROM `{database}`.`contractors` WHERE id = 0";
         }
 
-        public static String ShowLastDocumentNumber(String database, String year)
+        public static String ShowLastDocumentNumber(String date, String warehouseId, String documentType, String mode)
         {
-            return $"SELECT MAX(SUBSTRING_INDEX(number, '/', 1)) FROM `{database}`.`orders` " +
-                $"WHERE YEAR(date) = YEAR('{year}');";
+            String result = $"SELECT MAX(SUBSTRING_INDEX(number, '/', 1)) FROM orders ";
+            if (mode == "0")
+            {
+                result += $"WHERE MONTH('{date}') = MONTH(date) AND YEAR('{date}') = YEAR(date) ";
+            }
+            else
+            {
+                result += $"WHERE YEAR('{date}') = YEAR(date) ";
+            }
+            result += $"AND warehouse_id = '{warehouseId}' AND kind = '{documentType}'";
+
+            return result;
         }
 
         public static String ShowProductsInDocument(String orderNumber)
@@ -217,9 +232,9 @@ namespace EngineersThesis.General
                 $"GROUP BY products.name;";
         }
 
-        public static String GetStrategy()
+        public static String GetSetting(String id)
         {
-            return "SELECT value FROM settings WHERE id = 1";
+            return $"SELECT value FROM settings WHERE id = '{id}'";
         }
 
         public static String GetProductFromOrders(String productId, String warehouseId, String fifoOrLifo)
