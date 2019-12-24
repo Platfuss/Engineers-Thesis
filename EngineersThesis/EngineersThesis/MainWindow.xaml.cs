@@ -25,6 +25,7 @@ namespace EngineersThesis
         private WelcomeScreen welcomeScreen;
         private SqlHandler sqlHandler;
 
+        private String warehouseId;
         private String warehouseShortcut;
         private String warehouseName;
 
@@ -60,7 +61,10 @@ namespace EngineersThesis
                 OpenWarehousesManagerButton.IsEnabled = companyManageButton.IsEnabled = true;
                 OpenWarehousesManager(new object(), new RoutedEventArgs());
                 if (warehouseName != null && warehouseName != "")
+                {
                     SetDocumentGrid();
+                    warehouseId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehouseNameToId(sqlHandler.Database, warehouseName)))[0][0];
+                }
             }
             else
             {
@@ -301,7 +305,7 @@ namespace EngineersThesis
         private void SetButtonsEnability(bool isEnabled)
         {
             ManageProductsButton.IsEnabled = addContractorButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled =
-                companyManageButton.IsEnabled = newDocumentButton.IsEnabled = documentCategoryComboBox.IsEnabled = isEnabled;
+                companyManageButton.IsEnabled = newDocumentButton.IsEnabled = documentCategoryComboBox.IsEnabled = ProductsOnDocumentsButton.IsEnabled = isEnabled;
             documentCategoryComboBox.SelectedIndex = isEnabled ? 0 : -1;
         }
 
@@ -312,7 +316,15 @@ namespace EngineersThesis
                 Owner = this
             };
             statistics.ShowDialog();
+        }
 
+        private void OnProductsOnDocumentsClick(object sender, RoutedEventArgs e)
+        {
+            var productsOnDocuments = new ProductsOnDocuments(sqlHandler, warehouseId)
+            {
+                Owner = this
+            };
+            productsOnDocuments.ShowDialog();
         }
     }
 }

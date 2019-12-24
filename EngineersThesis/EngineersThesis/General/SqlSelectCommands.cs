@@ -249,5 +249,30 @@ namespace EngineersThesis.General
                 $"WHERE product_id = '{productId}' AND warehouse_id = '{warehouseId}' AND leftover > 0 " +
                 $"ORDER BY orders.date {order}, orders.id {order};";
         }
+
+        public static String ShowOrdersContainingProduct(String productId, List<String> documentTypes)
+        {
+            String types = "";
+            foreach (var type in documentTypes)
+            {
+                types += $"'{type}', ";
+            }
+            types = types.Remove(types.Length - 2);
+
+            return
+                $"SELECT  DATE_FORMAT(date, '%Y-%m-%d') as date, number, contractors.name " +
+                $"FROM orders " +
+                $"INNER JOIN order_details ON orders.id = order_id " +
+                $"INNER JOIN contractors ON contractor_id = contractors.id " +
+                $"INNER JOIN products ON product_id = products.id " +
+                $"INNER JOIN warehouses ON warehouse_id = warehouses.id " +
+                $"WHERE product_id = '{productId}' AND kind IN ({types}) ";
+        }
+
+        public static String ShowOrdersContainingProduct(String productId, List<String> documentTypes, String warehouseId)
+        {
+            String start = ShowOrdersContainingProduct(productId, documentTypes);
+            return start += $"AND warehouse_id = '{warehouseId}' ";
+        }
     }
 }
