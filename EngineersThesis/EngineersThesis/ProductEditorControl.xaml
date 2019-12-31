@@ -31,6 +31,7 @@
                     </Grid.RowDefinitions>
 
                     <Label Content="Nazwa" HorizontalAlignment="Left" VerticalAlignment="Center" Width="122" VerticalContentAlignment="Center" Height="26"/>
+                    <Label Content="Sugerowane ceny" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="4" FontWeight="Bold" FontSize="12"/>
                     <Label Content="Cena zakupu netto" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="5" VerticalContentAlignment="Center" Height="26" Width="114" />
                     <Label Content="Cena sprzedaży netto" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="7" VerticalContentAlignment="Center" Height="26" />
                     <Label Content="Rodzaj produktu" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="0" VerticalContentAlignment="Center" Height="26" Width="114" />

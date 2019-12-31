@@ -5,22 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EngineersThesis"
         mc:Ignorable="d"
-<<<<<<< Updated upstream
-        Title="Widok magazynu" WindowState="Maximized" Closing="Window_Closing" Loaded="Window_Loaded" MinWidth="1000" MinHeight="700" Height="668" Width="1313">
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="3*"/>
-			<RowDefinition Height="3*"/>
-			<RowDefinition Height="3*"/>
-			<RowDefinition Height="3*"/>
-			<RowDefinition Height="50*"/>
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition/>
-			<ColumnDefinition/>
-			<ColumnDefinition/>
-		</Grid.ColumnDefinitions>
-=======
         Title="Widok magazynu" WindowState="Maximized" Closing="Window_Closing" Loaded="Window_Loaded" MinWidth="1000" MinHeight="700" Height="808" Width="1513">
     <Grid>
         <Grid.RowDefinitions>
@@ -35,9 +19,8 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
->>>>>>> Stashed changes
 
-		<Label Content="Produkty w tym magazynie" Grid.Row="1" FontWeight="Bold" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" FontSize="16"/>
+        <Label Content="Produkty w tym magazynie" Grid.Row="1" FontWeight="Bold" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" FontSize="16"/>
 		<Label Content="Dokumenty" Grid.Row="1" Grid.Column="1" FontWeight="Bold" HorizontalContentAlignment="Center" FontSize="16"/>
 		<Label Content="Kontrahenci" Grid.Row="1" Grid.Column="2" FontWeight ="Bold" HorizontalContentAlignment="Right" FontSize="16"/>
 
@@ -64,30 +47,19 @@
 			<Button x:Name="showDocumentDetailsButton" IsEnabled="False" Content="Szczegóły dokumentu" Click="OnShowDocumentDetails" Width="130" Margin="0,5" DockPanel.Dock="Right"/>
 		</DockPanel>
 
-		<DockPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="10,1,10,0" LastChildFill="False">
-			<Button Content="Wybór bazy" Width="100" Click="ChooseDatabase" DockPanel.Dock="Right"/>
-			<Border BorderThickness="2" DockPanel.Dock="Right"/>
-			<Button x:Name="companyManageButton" Click="OnManageCompanyInfo" Content="Informacje o firmie" DockPanel.Dock="Right" IsEnabled="False" Width="130"/>
-			<Border BorderThickness="2" DockPanel.Dock="Right"/>
-			<Button x:Name="OpenWarehousesManagerButton" Content="Zarządzaj magazynami" DockPanel.Dock="Right" Click="OpenWarehousesManager" IsEnabled="False" Width="130"/>
-			<Border BorderThickness="2" DockPanel.Dock="Right"/>
-			<Button Width="130" Content="Statystyki" Click="OnShowStatisticsButton" DockPanel.Dock="Right"/>
+        <DockPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="10,1,10,0" LastChildFill="False">
+            <Button Content="Wybór bazy" Width="100" Click="ChooseDatabase" DockPanel.Dock="Right"/>
             <Border BorderThickness="2" DockPanel.Dock="Right"/>
-<<<<<<< Updated upstream
-            <Button Width="130" Content="Remanent" Click="OnShowStockTakingButtonClick" DockPanel.Dock="Right"/>
-		</DockPanel>
-=======
             <Button x:Name="companyManageButton" Click="OnManageCompanyInfo" Content="Informacje o firmie" DockPanel.Dock="Right" IsEnabled="False" Width="130"/>
             <Border BorderThickness="2" DockPanel.Dock="Right"/>
             <Button x:Name="OpenWarehousesManagerButton" Content="Zarządzaj magazynami" DockPanel.Dock="Right" Click="OpenWarehousesManager" IsEnabled="False" Width="130"/>
             <Border BorderThickness="2" DockPanel.Dock="Right"/>
-            <Button Width="130" Content="Statystyki" Click="OnShowStatisticsButton" DockPanel.Dock="Right"/>
+            <Button x:Name="stockTakingButton" IsEnabled="False" Content="Inwentaryzacja" DockPanel.Dock="Right" Width="130" Click="OnStockTakingButtonClicked"/>
             <Border BorderThickness="2" DockPanel.Dock="Right"/>
-            <Button Content="Inwentaryzacja" DockPanel.Dock="Right" Width="130" Click="OnStockTakingButtonClicked"/>
+            <Button Width="130" Content="Statystyki" Click="OnShowStatisticsButton" DockPanel.Dock="Right"/>
         </DockPanel>
->>>>>>> Stashed changes
 
-		<DockPanel Grid.Row="2" Grid.Column="2" Margin="10,0,10,0" LastChildFill="False">
+        <DockPanel Grid.Row="2" Grid.Column="2" Margin="10,0,10,0" LastChildFill="False">
 			<Button x:Name="addContractorButton" Content="Dodaj" DockPanel.Dock="Left" Width="60" IsEnabled="False" Click="OnAddContractor"/>
 			<Border BorderThickness="2" DockPanel.Dock="Left"/>
 			<Button x:Name="editContractorButton" Content="Edytuj" DockPanel.Dock="Left" Width="60" IsEnabled="False" Click="OnEditContractor"/>

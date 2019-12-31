@@ -64,15 +64,22 @@ namespace EngineersThesis
                 sqlExecutionResult = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehouseDataForOrderNumber(row[1].ToString())));
             }
 
-            for (int i = 0; i < sqlExecutionResult.Count; i++)
+            if (sqlExecutionResult[0][0] =="Operacja wewnętrzna")
             {
-                String contractor = "";
-                foreach (var field in sqlExecutionResult[i])
+                contractorComboBox.Items.Add("Operacja wewnętrzna");
+            }
+            else
+            {
+                for (int i = 0; i < sqlExecutionResult.Count; i++)
                 {
-                    contractor += field + ", ";
+                    String contractor = "";
+                    foreach (var field in sqlExecutionResult[i])
+                    {
+                        contractor += field + ", ";
+                    }
+                    contractor = contractor.Remove(contractor.Length - 2);
+                    contractorComboBox.Items.Add(contractor);
                 }
-                contractor = contractor.Remove(contractor.Length - 2);
-                contractorComboBox.Items.Add(contractor);
             }
             contractorComboBox.SelectedIndex = 0;
         }
@@ -127,6 +134,15 @@ namespace EngineersThesis
                 }
                 contractor = contractor.Remove(contractor.Length - 2);
                 contractorComboBox.Items.Add(contractor);
+            }
+
+            if (documentType == "PW" || documentType == "RW")
+            {
+                contractorComboBox.Items.Clear();
+                contractorComboBox.Items.Add("Operacja wewnętrzna");
+                contractorIndexToID.Clear();
+                contractorIndexToID.Add(0, "-1");
+                contractorComboBox.IsEnabled = false;
             }
 
             if (sqlExecutionResult.Count > 0)
@@ -238,6 +254,15 @@ namespace EngineersThesis
 
         private void OnAcceptClick(object sender, RoutedEventArgs e)
         {
+            String pickedDate = datePicker.Text;
+            bool areThereOlderDocuments = Convert.ToInt32(sqlHandler.ExecuteCommand(SqlSelectCommands.AreThereOlderDocuments(pickedDate)).Tables[0].Rows[0][0]) > 0;
+            if (areThereOlderDocuments == true)
+            {
+                MessageBox.Show("Błąd! Istnieją już starsze dokumenty!");
+                return;
+            }
+
+
             if (contractorComboBox.SelectedIndex != -1 && dataGrid.Items.Count > 0)
             {
                 bool validated = true;

@@ -77,7 +77,8 @@ namespace EngineersThesis.General
                 "CITY varchar(255)," +
                 "POSTAL_CODE varchar(10)," +
                 "TAX_CODE varchar(15) UNIQUE" +
-                ");";
+                ");" +
+                "INSERT IGNORE contractors (ID, NAME) VALUES (-1, 'Operacja wewnętrzna');";
         }
 
         public static String OrdersTable()
@@ -113,6 +114,18 @@ namespace EngineersThesis.General
                 ");";
         }
 
+        public static String Attachments()
+        {
+            return
+                "CREATE TABLE IF NOT EXISTS `attachements`(" +
+                "ORDER_ID int NOT NULL," +
+                "ATTACHED_ORDER_ID int NOT NULL," +
+                "PRIMARY KEY (ORDER_ID, ATTACHED_ORDER_ID)," +
+                "FOREIGN KEY (ORDER_ID) REFERENCES `orders` (ID) ON DELETE CASCADE," +
+                "FOREIGN KEY (ATTACHED_ORDER_ID) REFERENCES `orders` (ID) ON DELETE CASCADE" +
+                ");";
+        }
+
         public static String CreateUpdateWarehousesProductTrigger()
         {
             return
@@ -130,7 +143,7 @@ namespace EngineersThesis.General
             "      ELSE " +
             "          INSERT INTO warehouses_products(warehouse_id, product_id, amount) VALUES (war_id, new.product_id, new.amount); " +
             "      END IF ;" +
-            "  ELSE " +
+            "  ELSEIF(doctype='1') THEN " +
             "      UPDATE warehouses_products w_p SET w_p.amount = w_p.amount - new.amount WHERE w_p.product_id = new.product_id AND w_p.warehouse_id = war_id; " +
             "  END IF; " +
             "END$$";

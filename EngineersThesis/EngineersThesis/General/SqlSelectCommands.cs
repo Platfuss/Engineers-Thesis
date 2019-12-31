@@ -30,7 +30,7 @@ namespace EngineersThesis.General
 
         public static String ShowProducts(String database)
         {
-            return $"SELECT id, name, unit, tax, price_buy, price_sell FROM `{database}`.`products` ORDER BY name;";
+            return $"SELECT id, name, unit, tax FROM `{database}`.`products` ORDER BY name;";
         }
 
         public static String CheckIfProductIdIsInWarehouse(String warehouseId, String productId)
@@ -104,7 +104,7 @@ namespace EngineersThesis.General
 
         public static String ShowProductsInWarehouse(String database, String warehouseName)
         {
-            return $"SELECT p.id, p.name, unit, amount, price_buy, price_sell, tax " +
+            return $"SELECT p.id, p.name, unit, amount, tax " +
                 $"FROM `{database}`.`warehouses` w " +
                 $"INNER JOIN `{database}`.`warehouses_products` w_p ON w.id = w_p.warehouse_id " +
                 $"INNER JOIN `{database}`.`products` p              ON p.ID = w_p.product_id " +
@@ -114,7 +114,7 @@ namespace EngineersThesis.General
 
         public static String ShowContractors(String database)
         {
-            return $"SELECT * FROM `{database}`.`contractors` WHERE id <> 0;";
+            return $"SELECT * FROM `{database}`.`contractors` WHERE id > 0;";
         }
 
         public static String ShowDocumentWithContractor(String contractorId)
@@ -140,7 +140,7 @@ namespace EngineersThesis.General
 
         public static String ShowMyCompanyData(String database)
         {
-            return $"SELECT * FROM `{database}`.`contractors` WHERE id = -1";
+            return $"SELECT * FROM `{database}`.`contractors` WHERE id = -2";
         }
 
         public static String ShowLastDocumentNumber(String date, String warehouseId, String documentType, String mode)
@@ -162,7 +162,7 @@ namespace EngineersThesis.General
         public static String ShowProductsInDocument(String orderNumber)
         {
             return 
-                $"SELECT p.name, p.unit, p.tax, p.price_buy, p.price_sell, details.amount FROM products p " +
+                $"SELECT p.name, p.unit, p.tax, details.price, details.amount FROM products p " +
                 $"INNER JOIN order_details details ON product_id = p.id " +
                 $"INNER JOIN orders ord ON details.order_id = ord.id " +
                 $"WHERE ord.number = '{orderNumber}';";
@@ -278,15 +278,23 @@ namespace EngineersThesis.General
         public static String PrepareStockTaking(String date, String warehouseId)
         {
             return
-                $"SELECT x.id, x.name, x.unit, x.amount, '0' AS should_be, '0' AS price " +
-                $"FROM " +
-                $"( " +
-                $"  SELECT products.id, products.name, products.unit, SUM(IF (purchase_sell = '0', order_details.amount, 0)) - SUM(IF (purchase_sell = '1', order_details.amount, 0)) AS amount " +
-                $"  FROM products " +
-                $"  INNER JOIN order_details ON products.id = product_id " +
-                $"  INNER JOIN orders ON orders.id = order_id " +
-                $"  WHERE orders.date < '{date}' " +
-                $") x";
+                $"SELECT products.id, products.name, products.unit, SUM(IF(purchase_sell = '0', order_details.amount, 0)) - SUM(IF(purchase_sell = '1', order_details.amount, 0)) AS before_change, " +
+                $"  '0' AS after_change, '0' AS price " +
+                $"FROM products   LEFT JOIN order_details ON products.id = product_id " +
+                $"LEFT JOIN orders ON orders.id = order_id " +
+                $"LEFT JOIN warehouses ON warehouse_id = warehouses.id " +
+                $"WHERE orders.date <= '{date}' AND warehouse_id = '{warehouseId}'" +
+                $"HAVING products.id IS NOT NULL;";
+
+        }
+
+        public static String GetProductsNotUsedInWarehouse(String warehouseId)
+        {
+            return
+                $"SELECT p.id, p.name, p.unit, '0' AS before_change, '0' AS after_change, '0' AS price " +
+                $"FROM products p " +
+                $"LEFT JOIN warehouses_products ON warehouses_products.product_id = p.id " +
+                $"WHERE amount <= 0 AND warehouse_id = '{warehouseId}' OR NOT EXISTS(SELECT NULL FROM warehouses_products WHERE warehouses_products.product_id = p.id);";
         }
 
         public static String GetLastProductsBuyPrice(String date, String warehouseId)
@@ -299,6 +307,53 @@ namespace EngineersThesis.General
                 $"WHERE purchase_sell = '0' AND date <= '{date}' AND warehouse_id = '{warehouseId}' " +
                 $"GROUP BY products.id " + 
                 $"ORDER BY date DESC, orders.id DESC ";
+        }
+
+        public static String ShowProductFuture(String date, String warehouseId, String productId)
+        {
+            return
+                $"SELECT amount, purchase_sell " +
+                $"FROM order_details " +
+                $"INNER JOIN orders ON order_id = orders.id " +
+                $"INNER JOIN warehouses ON warehouse_id = warehouses.id " +
+                $"WHERE orders.date > '{date}' AND product_id = '{productId}' AND warehouse_id = '{warehouseId}' AND purchase_sell IN ('0', '1') " +
+                $"ORDER BY date ASC, orders.id ASC";
+        }
+
+        public static String ShowStockTakings(String warehouseId)
+        {
+            return
+                $"SELECT id, number, DATE_FORMAT(date, '%Y-%m-%d') as date FROM orders WHERE kind = 'INW' AND warehouse_id = '{warehouseId}';";
+        }
+
+        public static String ShowStockTakingMainDocumentDetails(String orderNumber)
+        {
+            return
+                $"SELECT number, DATE_FORMAT(date, '%Y-%m-%d') as date FROM orders WHERE number = '{orderNumber}';";
+        }
+
+        public static String CheckIfStockTakingWasMade(String warehouseId, String date)
+        {
+            return
+                $"SELECT COUNT(orders.id) FROM orders WHERE kind = 'st' AND date >= '{date}' AND warehouse_id = '{warehouseId}';";
+        }
+
+        public static String GetProductPriceAndShouldBeFromStockTaking(String stockTakingNumber)
+        {
+            return
+                $"SELECT products.id, IF(orders2.purchase_sell = '0', '0', '1'), order_details.amount, order_details.price " +
+                $"FROM orders " +
+                $"INNER JOIN attachements ON orders.id = attachements.order_id " +
+                $"INNER JOIN order_details ON attachements.attached_order_id = order_details.order_id " +
+                $"INNER JOIN orders orders2 ON orders2.id = attachements.attached_order_id " +
+                $"INNER JOIN products ON product_id = products.id " +
+                $"WHERE orders.number = '{stockTakingNumber}';";
+        }
+
+        public static String AreThereOlderDocuments(String date)
+        {
+            return
+                $"SELECT COUNT(orders.id) FROM orders WHERE date < '{date}';";
         }
     }
 }

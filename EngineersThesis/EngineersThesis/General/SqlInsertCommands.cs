@@ -40,14 +40,14 @@ namespace EngineersThesis.General
 
         public static String InsertMyCompany(String database, String name, String street, String city, String postalCode, String taxCode)
         {
-            return $"INSERT INTO `{database}`.`contractors` (id, name, street, city, postal_code, tax_code) VALUES (-1, '{name}', '{street}', '{city}', '{postalCode}', '{taxCode}');" +
-                $"UPDATE `{database}`.`contractors` SET id = 0 ORDER BY id DESC LIMIT 1";
+            return $"INSERT INTO `{database}`.`contractors` (id, name, street, city, postal_code, tax_code) VALUES (-2, '{name}', '{street}', '{city}', '{postalCode}', '{taxCode}');";
         }
 
-        public static String InsertOrder(String database, String number, String contractor_id, String warehouse_id, String kind, String purcharse_sell, String date)
+        public static String InsertOrder(String database, String number, String contractor_id, String warehouse_id, String kind, String purchase_sell, String date)
         {
+            String pur_sell = purchase_sell == "NULL" ? "NULL" : $"'{purchase_sell}'";
             return $"INSERT INTO `{database}`.`orders` (number, contractor_id, warehouse_id, kind, purchase_sell, date) VALUES" +
-                $"('{number}', '{contractor_id}', '{warehouse_id}', '{kind}', '{purcharse_sell}', '{date}')";
+                $"('{number}', '{contractor_id}', '{warehouse_id}', '{kind}', {pur_sell}, '{date}')";
         }
 
         public static String InsertOrderForMM(String database, String number, String warehouse_id, String warehouse_move_id, String kind, String purcharse_sell, String date)
@@ -79,6 +79,11 @@ namespace EngineersThesis.General
         public static String InsertSettings(String id, String setting)
         {
             return $"INSERT IGNORE settings (ID, VALUE) VALUES ('{id}', {setting})";
+        }
+
+        public static String InsertAttachement(String orderId, String attachedOrderId)
+        {
+            return $"INSERT INTO attachements (order_id, attached_order_id) VAlUES ('{orderId}', '{attachedOrderId}')";
         }
     }
 }

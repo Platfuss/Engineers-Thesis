@@ -305,13 +305,15 @@ namespace EngineersThesis
         private void SetButtonsEnability(bool isEnabled)
         {
             ManageProductsButton.IsEnabled = addContractorButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled =
-                companyManageButton.IsEnabled = newDocumentButton.IsEnabled = documentCategoryComboBox.IsEnabled = ProductsOnDocumentsButton.IsEnabled = isEnabled;
+                companyManageButton.IsEnabled = newDocumentButton.IsEnabled = documentCategoryComboBox.IsEnabled = ProductsOnDocumentsButton.IsEnabled = 
+                stockTakingButton.IsEnabled = isEnabled;
+
             documentCategoryComboBox.SelectedIndex = isEnabled ? 0 : -1;
         }
 
         private void OnStockTakingButtonClicked(object sender, RoutedEventArgs e)
         {
-            //var stockTaking = new StockTaking(sqlHandler, warehouseId)
+            var stockTaking = new StockTaking(sqlHandler, warehouseId)
             {
                 Owner = this
             };

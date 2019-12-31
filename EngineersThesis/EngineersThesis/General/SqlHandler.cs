@@ -111,6 +111,7 @@ namespace EngineersThesis.General
                 ExecuteNonQuery(SqlCreateTableCommands.ContractorsTable());
                 ExecuteNonQuery(SqlCreateTableCommands.OrdersTable());
                 ExecuteNonQuery(SqlCreateTableCommands.OrderDetailsTable());
+                ExecuteNonQuery(SqlCreateTableCommands.Attachments());
                 var script = new MySqlScript(connection, SqlCreateTableCommands.CreateUpdateWarehousesProductTrigger())
                 {
                     Delimiter = "$$"

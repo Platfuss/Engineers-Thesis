@@ -36,7 +36,9 @@ namespace EngineersThesis.General
             {"net_and_gross", "Wartość brutto" },
             {"leftover", "Pozostało" },
             {"should_be", "Powinno być" },
-            {"price", "Wartość" }
+            {"price", "Wartość" },
+            {"before_change", "Przed zmianą" },
+            {"after_change", "Po zmianie" },
         };
     }
 }

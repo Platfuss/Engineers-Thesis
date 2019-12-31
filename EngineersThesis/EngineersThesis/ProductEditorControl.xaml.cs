@@ -232,18 +232,6 @@ namespace EngineersThesis
                 if (editMode)
                 {
                     String productId = givenEditedRow[0].ToString();
-                    List<List<String>> productUsedIn = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProductInUse(productId)));
-                    if (productUsedIn.Count != 0)
-                    {
-                        string message = "Błąd! Produkt został już użyty w następujących dokumentach\n";
-                        foreach (var node in productUsedIn)
-                        {
-                            message += node[0] + ", ";
-                        }
-                        message = message.Remove(message.Length - 2);
-                        MessageBox.Show(message, "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
 
                     if (wasComplex == false && !(bool)complexProductRadioButton.IsChecked)
                     {
