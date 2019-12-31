@@ -55,6 +55,8 @@
 			<Button x:Name="OpenWarehousesManagerButton" Content="Zarządzaj magazynami" DockPanel.Dock="Right" Click="OpenWarehousesManager" IsEnabled="False" Width="130"/>
 			<Border BorderThickness="2" DockPanel.Dock="Right"/>
 			<Button Width="130" Content="Statystyki" Click="OnShowStatisticsButton" DockPanel.Dock="Right"/>
+            <Border BorderThickness="2" DockPanel.Dock="Right"/>
+            <Button Width="130" Content="Remanent" Click="OnShowStockTakingButtonClick" DockPanel.Dock="Right"/>
 		</DockPanel>
 
 		<DockPanel Grid.Row="2" Grid.Column="2" Margin="10,0,10,0" LastChildFill="False">

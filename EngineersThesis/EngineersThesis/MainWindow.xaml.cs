@@ -318,6 +318,15 @@ namespace EngineersThesis
             statistics.ShowDialog();
         }
 
+        private void OnShowStockTakingButtonClick(object sender, RoutedEventArgs e)
+        {
+            var stockTaking = new StockTaking()
+            {
+                Owner = this
+            };
+            stockTaking.ShowDialog();
+        }
+
         private void OnProductsOnDocumentsClick(object sender, RoutedEventArgs e)
         {
             var productsOnDocuments = new ProductsOnDocuments(sqlHandler, warehouseId)
