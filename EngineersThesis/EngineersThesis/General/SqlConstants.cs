@@ -35,6 +35,8 @@ namespace EngineersThesis.General
             {"gross", "Kwota VAT" },
             {"net_and_gross", "Wartość brutto" },
             {"leftover", "Pozostało" },
+            {"should_be", "Powinno być" },
+            {"price", "Wartość" }
         };
     }
 }

@@ -62,8 +62,8 @@ namespace EngineersThesis
                 OpenWarehousesManager(new object(), new RoutedEventArgs());
                 if (warehouseName != null && warehouseName != "")
                 {
-                    SetDocumentGrid();
                     warehouseId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehouseNameToId(sqlHandler.Database, warehouseName)))[0][0];
+                    SetDocumentGrid();
                 }
             }
             else
@@ -309,6 +309,15 @@ namespace EngineersThesis
             documentCategoryComboBox.SelectedIndex = isEnabled ? 0 : -1;
         }
 
+        private void OnStockTakingButtonClicked(object sender, RoutedEventArgs e)
+        {
+            //var stockTaking = new StockTaking(sqlHandler, warehouseId)
+            {
+                Owner = this
+            };
+            stockTaking.ShowDialog();
+        }
+
         private void OnShowStatisticsButton(object sender, RoutedEventArgs e)
         {
             var statistics = new Statistics(sqlHandler)
@@ -316,15 +325,6 @@ namespace EngineersThesis
                 Owner = this
             };
             statistics.ShowDialog();
-        }
-
-        private void OnShowStockTakingButtonClick(object sender, RoutedEventArgs e)
-        {
-            var stockTaking = new StockTaking()
-            {
-                Owner = this
-            };
-            stockTaking.ShowDialog();
         }
 
         private void OnProductsOnDocumentsClick(object sender, RoutedEventArgs e)

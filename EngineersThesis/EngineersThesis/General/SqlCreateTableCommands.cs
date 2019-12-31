@@ -36,7 +36,8 @@ namespace EngineersThesis.General
                 "UNIT varchar(5) NOT NULL," +
                 "PRICE_BUY double NOT NULL CHECK(PRICE_BUY >= 0)," +
                 "PRICE_SELL double NOT NULL CHECK(PRICE_SELL >= 0)," +
-                "TAX int DEFAULT 0 CHECK (TAX >=0)" +
+                "TAX int DEFAULT 0 CHECK (TAX >=0)," +
+                "VISIBLE bool" +
                 ");";
         }
 

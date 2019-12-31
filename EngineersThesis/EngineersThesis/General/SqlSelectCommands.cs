@@ -140,7 +140,7 @@ namespace EngineersThesis.General
 
         public static String ShowMyCompanyData(String database)
         {
-            return $"SELECT * FROM `{database}`.`contractors` WHERE id = 0";
+            return $"SELECT * FROM `{database}`.`contractors` WHERE id = -1";
         }
 
         public static String ShowLastDocumentNumber(String date, String warehouseId, String documentType, String mode)
@@ -273,6 +273,32 @@ namespace EngineersThesis.General
         {
             String start = ShowOrdersContainingProduct(productId, documentTypes);
             return start += $"AND warehouse_id = '{warehouseId}' ";
+        }
+
+        public static String PrepareStockTaking(String date, String warehouseId)
+        {
+            return
+                $"SELECT x.id, x.name, x.unit, x.amount, '0' AS should_be, '0' AS price " +
+                $"FROM " +
+                $"( " +
+                $"  SELECT products.id, products.name, products.unit, SUM(IF (purchase_sell = '0', order_details.amount, 0)) - SUM(IF (purchase_sell = '1', order_details.amount, 0)) AS amount " +
+                $"  FROM products " +
+                $"  INNER JOIN order_details ON products.id = product_id " +
+                $"  INNER JOIN orders ON orders.id = order_id " +
+                $"  WHERE orders.date < '{date}' " +
+                $") x";
+        }
+
+        public static String GetLastProductsBuyPrice(String date, String warehouseId)
+        {
+            return
+                $"SELECT products.id, order_details.price " +
+                $"FROM order_details " +
+                $"INNER JOIN products ON products.id = product_id " +
+                $"INNER JOIN orders ON order_id = orders.id " +
+                $"WHERE purchase_sell = '0' AND date <= '{date}' AND warehouse_id = '{warehouseId}' " +
+                $"GROUP BY products.id " + 
+                $"ORDER BY date DESC, orders.id DESC ";
         }
     }
 }
