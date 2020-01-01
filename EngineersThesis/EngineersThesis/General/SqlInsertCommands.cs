@@ -83,7 +83,7 @@ namespace EngineersThesis.General
 
         public static String InsertAttachement(String orderId, String attachedOrderId)
         {
-            return $"INSERT INTO attachements (order_id, attached_order_id) VAlUES ('{orderId}', '{attachedOrderId}')";
+            return $"INSERT INTO attachments (order_id, attached_order_id) VAlUES ('{orderId}', '{attachedOrderId}')";
         }
     }
 }

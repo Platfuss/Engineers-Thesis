@@ -30,7 +30,11 @@ namespace EngineersThesis.General
 
         public static String ShowProducts(String database)
         {
-            return $"SELECT id, name, unit, tax, price_buy, price_sell FROM `{database}`.`products` ORDER BY name;";
+            return 
+                $"SELECT id, name, unit, tax, price_buy, price_sell " +
+                $"FROM products " +
+                $"WHERE products.id NOT IN (SELECT components.id_complex FROM components) " +
+                $"ORDER BY name;";
         }
 
         public static String CheckIfProductIdIsInWarehouse(String warehouseId, String productId)
@@ -296,10 +300,12 @@ namespace EngineersThesis.General
             return
                 $"SELECT products.id, products.name, products.unit, SUM(IF(purchase_sell = '0', order_details.amount, 0)) - SUM(IF(purchase_sell = '1', order_details.amount, 0)) AS before_change, " +
                 $"  '0' AS after_change, '0' AS price " +
-                $"FROM products   LEFT JOIN order_details ON products.id = product_id " +
-                $"LEFT JOIN orders ON orders.id = order_id " +
-                $"LEFT JOIN warehouses ON warehouse_id = warehouses.id " +
-                $"WHERE orders.date <= '{date}' AND warehouse_id = '{warehouseId}'" +
+                $"FROM products " +
+                $"INNER JOIN order_details ON products.id = product_id " +
+                $"INNER JOIN orders ON orders.id = order_id " +
+                $"INNER JOIN warehouses ON warehouse_id = warehouses.id " +
+                $"WHERE orders.date <= '{date}' AND warehouse_id = '{warehouseId}' " +
+                $"GROUP BY products.id " +
                 $"HAVING products.id IS NOT NULL;";
 
         }
@@ -359,9 +365,9 @@ namespace EngineersThesis.General
             return
                 $"SELECT products.id, IF(orders2.purchase_sell = '0', '0', '1'), order_details.amount, order_details.price " +
                 $"FROM orders " +
-                $"INNER JOIN attachements ON orders.id = attachements.order_id " +
-                $"INNER JOIN order_details ON attachements.attached_order_id = order_details.order_id " +
-                $"INNER JOIN orders orders2 ON orders2.id = attachements.attached_order_id " +
+                $"INNER JOIN attachments ON orders.id = attachments.order_id " +
+                $"INNER JOIN order_details ON attachments.attached_order_id = order_details.order_id " +
+                $"INNER JOIN orders orders2 ON orders2.id = attachments.attached_order_id " +
                 $"INNER JOIN products ON product_id = products.id " +
                 $"WHERE orders.number = '{stockTakingNumber}';";
         }
@@ -378,8 +384,8 @@ namespace EngineersThesis.General
                 $"SELECT DATE_FORMAT(orders.date, '%Y-%m-%d') AS date, products.name, IF (orders.kind = 'kom', 'Skompletowano', 'Rozłożono') AS action, " +
                 $"  IF (orders.kind = 'KOM', IF (ord2.kind = 'PW', order_details.amount, NULL), IF(ord2.kind = 'RW', order_details.amount, NULL)) AS amount " +
                 $"FROM orders " +
-                $"INNER JOIN attachements ON orders.id = attachements.order_id " +
-                $"INNER JOIN orders ord2 ON ord2.id = attachements.attached_order_id " +
+                $"INNER JOIN attachments ON orders.id = attachments.order_id " +
+                $"INNER JOIN orders ord2 ON ord2.id = attachments.attached_order_id " +
                 $"INNER JOIN order_details ON order_details.order_id = ord2.id " +
                 $"INNER JOIN products ON products.id = order_details.product_id " +
                 $"WHERE orders.warehouse_id = '{warehouseId}' AND orders.kind IN('kom', 'dek') " +
