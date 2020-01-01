@@ -26,6 +26,7 @@ namespace EngineersThesis
         private DataRowView givenRow;
         private bool editMode = false;
         private bool forCompany;
+        public String TaxCode { get; private set; }
 
         public ContractorEditor(SqlHandler handler, bool _forCompany = false)
         {
@@ -139,6 +140,19 @@ namespace EngineersThesis
                 }
             }
             return result;
+        }
+
+        public void SetTaxCode(String taxCode)
+        {
+            bool good = CheckTaxCodeValidation(taxCode);
+            if (good)
+            {
+                TaxCode = taxCode;
+            }
+            else
+            {
+                throw new ArgumentException("Niepoprawny NIP");
+            }
         }
     }
 }
