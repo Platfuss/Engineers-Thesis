@@ -30,7 +30,7 @@ namespace EngineersThesis.General
 
         public static String ShowProducts(String database)
         {
-            return $"SELECT id, name, unit, tax FROM `{database}`.`products` ORDER BY name;";
+            return $"SELECT id, name, unit, tax, price_buy, price_sell FROM `{database}`.`products` ORDER BY name;";
         }
 
         public static String CheckIfProductIdIsInWarehouse(String warehouseId, String productId)
@@ -65,7 +65,7 @@ namespace EngineersThesis.General
 
         public static String ShowOrdinaryProductsWithFollowingZero(String database)
         {
-            return $"SELECT id, name, unit, tax, price_buy, price_sell, '0' AS amount FROM `{database}`.`products` WHERE NOT EXISTS(SELECT id_complex FROM components where id = id_complex) ORDER BY name;";
+            return $"SELECT id, name, '0' AS amount FROM `{database}`.`products` WHERE NOT EXISTS(SELECT id_complex FROM components where id = id_complex) ORDER BY name;";
         }
 
         public static String ShowProductsWithFollowingZeroForID(String database, String id, bool mode)
@@ -92,9 +92,20 @@ namespace EngineersThesis.General
             return $"SELECT id_component, amount FROM `{database}`.`components` WHERE id_complex = '{id}';";
         }
 
+        public static String ShowComplexProductRecipeWithName(String productId)
+        {
+            return
+                $"SELECT id_component, products.name, amount FROM components INNER JOIN products ON products.id = components.id_component WHERE id_complex = '{productId}';";
+        }
+
         public static String ShowComplexProductsID(String database)
         {
             return $"SELECT id_complex FROM `{database}`.`components` GROUP BY id_complex;";
+        }
+
+        public static String ShowComplexProductsName()
+        {
+            return $"SELECT id_complex, products.name FROM components INNER JOIN products ON products.id = components.id_complex GROUP BY id_complex;";
         }
 
         public static String ShowLastInsertedID(String database, String table)
@@ -108,8 +119,15 @@ namespace EngineersThesis.General
                 $"FROM `{database}`.`warehouses` w " +
                 $"INNER JOIN `{database}`.`warehouses_products` w_p ON w.id = w_p.warehouse_id " +
                 $"INNER JOIN `{database}`.`products` p              ON p.ID = w_p.product_id " +
-                $"AND w.name = '{warehouseName}'" +
+                $"AND w.name = '{warehouseName}' " +
                 $"WHERE amount > 0;";
+        }
+
+        public static String ShowProductAmountInWarehouse(String warehouseID, String productId)
+        {
+            return
+                $"INSERT IGNORE warehouses_products (warehouse_id, product_id, amount) VALUES ('{warehouseID}', '{productId}', 0);" +
+                $"SELECT warehouses_products.amount FROM warehouses_products WHERE warehouse_id = '{warehouseID}' AND product_id = '{productId}';";
         }
 
         public static String ShowContractors(String database)
@@ -125,8 +143,7 @@ namespace EngineersThesis.General
         public static String ShowOrders(String database, String warehouseId)
         {
             return
-                $"SELECT DATE_FORMAT(o.date, '%Y-%m-%d') as date, o.number, o.kind, IF(c.name IS NOT NULL, c.name, w.short) as name, " +
-                $"ROUND(IF(o.purchase_sell, sum(p.PRICE_SELL * amount * (100+p.tax) / 100), sum(p.PRICE_BUY * amount * (100+p.tax) / 100)), 2) as orderValue " +
+                $"SELECT DATE_FORMAT(o.date, '%Y-%m-%d') as date, o.number, o.kind, IF(c.name IS NOT NULL, c.name, w.short) as name " +
                 $"FROM `orders` o " +
                 $"INNER JOIN `order_details` o_d ON o.id = o_d.order_id " +
                 $"LEFT JOIN `contractors` c ON o.contractor_id = c.id " +
@@ -134,7 +151,6 @@ namespace EngineersThesis.General
                 $"INNER JOIN `products` p ON o_d.product_id = p.id " +
                 $"WHERE o.warehouse_id = '{warehouseId}' " +
                 $"GROUP BY o.number " +
-                $"HAVING orderValue IS NOT NULL " +
                 $"ORDER BY date DESC, o.number DESC; ";
         }
 
@@ -145,7 +161,7 @@ namespace EngineersThesis.General
 
         public static String ShowLastDocumentNumber(String date, String warehouseId, String documentType, String mode)
         {
-            String result = $"SELECT MAX(SUBSTRING_INDEX(number, '/', 1)) FROM orders ";
+            String result = $"SELECT MAX(CAST(SUBSTRING_INDEX(number, '/', 1) AS SIGNED)) FROM orders ";
             if (mode == "0")
             {
                 result += $"WHERE MONTH('{date}') = MONTH(date) AND YEAR('{date}') = YEAR(date) ";
@@ -154,7 +170,7 @@ namespace EngineersThesis.General
             {
                 result += $"WHERE YEAR('{date}') = YEAR(date) ";
             }
-            result += $"AND warehouse_id = '{warehouseId}' AND kind = '{documentType}'";
+            result += $"AND warehouse_id = '{warehouseId}' AND kind = '{documentType}';";
 
             return result;
         }
@@ -187,7 +203,7 @@ namespace EngineersThesis.General
 
         public static String ShowOrderFullInfo(String orderNumber)
         {
-            return $"SELECT p.name, p.unit, or_det.amount, @net_price:=if(orders.purchase_sell, p.price_sell, p.price_buy) AS net_price, @net_sum:=(@net_price * or_det.amount) AS net_worth, " +
+            return $"SELECT p.name, p.unit, or_det.amount, @net_price:= or_det.price AS net_price, @net_sum:=(@net_price * or_det.amount) AS net_worth, " +
                 $"p.tax, @gross:=(@net_sum * p.tax / 100) AS gross,  (@gross + @net_sum) AS net_and_gross " +
                 $"FROM products p " +
                 $"INNER JOIN order_details or_det ON or_det.PRODUCT_ID = p.id " +
@@ -202,7 +218,7 @@ namespace EngineersThesis.General
                 $"SELECT @first:=SUM(x.net_price) AS net, x.tax AS percent_sign, @second:=SUM((x.net_price * x.tax / 100)) AS tax, (@first + @second) as result " +
                 $"FROM  " +
                 $"( " +
-                $"  SELECT IF (orders.purchase_sell, p.price_sell, p.price_buy) * or_det.amount AS net_price, p.tax AS tax" +
+                $"  SELECT or_det.price * or_det.amount AS net_price, p.tax AS tax" +
                 $"  FROM orders INNER JOIN order_details or_det ON or_det.order_id = orders.id " +
                 $"  INNER JOIN products p ON or_det.product_id = p.id " +
                 $"  WHERE orders.number = '{orderNumber}'" +
@@ -335,7 +351,7 @@ namespace EngineersThesis.General
         public static String CheckIfStockTakingWasMade(String warehouseId, String date)
         {
             return
-                $"SELECT COUNT(orders.id) FROM orders WHERE kind = 'st' AND date >= '{date}' AND warehouse_id = '{warehouseId}';";
+                $"SELECT COUNT(orders.id) FROM orders WHERE kind = 'INW' AND date >= '{date}' AND warehouse_id = '{warehouseId}';";
         }
 
         public static String GetProductPriceAndShouldBeFromStockTaking(String stockTakingNumber)
@@ -353,7 +369,21 @@ namespace EngineersThesis.General
         public static String AreThereOlderDocuments(String date)
         {
             return
-                $"SELECT COUNT(orders.id) FROM orders WHERE date < '{date}';";
+                $"SELECT COUNT(orders.id) FROM orders WHERE date > '{date}';";
+        }
+
+        public static String ShowComplexDocuments(String warehouseId)
+        {
+            return
+                $"SELECT DATE_FORMAT(orders.date, '%Y-%m-%d') AS date, products.name, IF (orders.kind = 'kom', 'Skompletowano', 'Rozłożono') AS action, " +
+                $"  IF (orders.kind = 'KOM', IF (ord2.kind = 'PW', order_details.amount, NULL), IF(ord2.kind = 'RW', order_details.amount, NULL)) AS amount " +
+                $"FROM orders " +
+                $"INNER JOIN attachements ON orders.id = attachements.order_id " +
+                $"INNER JOIN orders ord2 ON ord2.id = attachements.attached_order_id " +
+                $"INNER JOIN order_details ON order_details.order_id = ord2.id " +
+                $"INNER JOIN products ON products.id = order_details.product_id " +
+                $"WHERE orders.warehouse_id = '{warehouseId}' AND orders.kind IN('kom', 'dek') " +
+                $"HAVING amount IS NOT NULL; ";
         }
     }
 }

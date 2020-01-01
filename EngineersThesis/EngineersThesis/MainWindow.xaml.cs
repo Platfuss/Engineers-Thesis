@@ -246,9 +246,37 @@ namespace EngineersThesis
         {
             bool areAnyProducts = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProducts(sqlHandler.Database))).Count > 0;
             bool areAnyContractors = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowContractors(sqlHandler.Database))).Count > 0;
+            String documentType = documentCategoryComboBox.Text;
+            if (documentType == "MM")
+            {
+                bool areOtherWarehouses =  sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehouses(sqlHandler.Database)).Tables[0].Rows.Count > 1;
+                if (areOtherWarehouses == true)
+                {
+                    if (areAnyProducts == true)
+                    {
+                        var documentEditor = new DocumentEditor(sqlHandler, warehouseName, documentType)
+                        {
+                            Owner = this
+                        };
+                        documentEditor.ShowDialog();
+                        SetProductGrid();
+                        SetDocumentGrid();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Brak znanych produktów!");
+                    }
+
+                }
+                else
+                {
+                    MessageBox.Show("Brak innych magazynów!");
+                }
+                return;
+            }
+
             if (areAnyProducts && areAnyContractors)
             {
-                String documentType = documentCategoryComboBox.Text;
                 var documentEditor = new DocumentEditor(sqlHandler, warehouseName, documentType)
                 {
                     Owner = this
@@ -306,7 +334,7 @@ namespace EngineersThesis
         {
             ManageProductsButton.IsEnabled = addContractorButton.IsEnabled = OpenWarehousesManagerButton.IsEnabled =
                 companyManageButton.IsEnabled = newDocumentButton.IsEnabled = documentCategoryComboBox.IsEnabled = ProductsOnDocumentsButton.IsEnabled = 
-                stockTakingButton.IsEnabled = isEnabled;
+                stockTakingButton.IsEnabled = ProductionButton.IsEnabled = isEnabled;
 
             documentCategoryComboBox.SelectedIndex = isEnabled ? 0 : -1;
         }
@@ -318,6 +346,8 @@ namespace EngineersThesis
                 Owner = this
             };
             stockTaking.ShowDialog();
+            SetProductGrid();
+            SetDocumentGrid();
         }
 
         private void OnShowStatisticsButton(object sender, RoutedEventArgs e)
@@ -327,6 +357,17 @@ namespace EngineersThesis
                 Owner = this
             };
             statistics.ShowDialog();
+        }
+
+        private void OnProductionButtonClick(object sender, RoutedEventArgs e)
+        {
+            var production = new Production(sqlHandler, warehouseId)
+            {
+                Owner = this
+            };
+            production.ShowDialog();
+            SetProductGrid();
+            SetDocumentGrid();
         }
 
         private void OnProductsOnDocumentsClick(object sender, RoutedEventArgs e)

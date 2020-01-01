@@ -39,6 +39,7 @@ namespace EngineersThesis.General
             {"price", "Wartość" },
             {"before_change", "Przed zmianą" },
             {"after_change", "Po zmianie" },
+            {"action", "Czynność" },
         };
     }
 }

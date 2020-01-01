@@ -237,7 +237,7 @@ namespace EngineersThesis
             if (canStockTakingBeMade == true)
             {
                 bool decreaseProducts = false, increaseProducts = false;
-                
+
                 foreach (var tuple in objectsToChange)
                 {
                     if (tuple.Item3 > 0)
@@ -278,19 +278,58 @@ namespace EngineersThesis
                 {
                     String nextCode = GetNextCode("RW");
 
+                    String strategy = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.GetSetting("1")))[0][0];
+
                     sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrder(sqlHandler.Database, nextCode, "-1",
                         warehouseId, "RW", "1", selectedDate));
                     String insertedOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
+
+                    Dictionary<String, double> productsToMove = new Dictionary<string, double>();
                     foreach (var tuple in objectsToChange)
                     {
-                        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, insertedOrderId.ToString(),
-                            tuple.Item1, (-1 * tuple.Item3).ToString(), tuple.Item4));
+                        productsToMove.Add(tuple.Item1, Convert.ToDouble( -1 * tuple.Item3));
+                    }
+
+                    foreach (var toMove in productsToMove)
+                    {
+                        var result = sqlHandler.ExecuteCommand(SqlSelectCommands.GetProductFromOrders(toMove.Key, warehouseId, strategy)).Tables[0];
+
+                        double toDelete = toMove.Value;
+                        for (int i = 0; toDelete > 0; i++)
+                        {
+                            double availableWare = Convert.ToDouble(result.Rows[i].ItemArray[1].ToString());
+                            double difference = availableWare - toDelete;
+
+                            var columns = result.Rows[i].ItemArray;
+                            String buyOrderId = columns[0].ToString();
+                            String price = columns[2].ToString();
+
+                            if (difference >= 0)
+                            {
+                                sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertDetailsForOutOrders(insertedOrderId, buyOrderId, toMove.Key,
+                                    toDelete.ToString(), price));
+
+                                sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateLeftovers(buyOrderId, toMove.Key, difference.ToString()));
+                                break;
+                            }
+                            else
+                            {
+                                sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertDetailsForOutOrders(insertedOrderId, buyOrderId, toMove.Key,
+                                    availableWare.ToString(), price));
+
+                                sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateLeftovers(buyOrderId, toMove.Key, "0"));
+
+                                toDelete = -difference;
+                                continue;
+                            }
+                        }
+
                     }
                     sqlHandler.ExecuteCommand(SqlInsertCommands.InsertAttachement(insertedStockTakingId, insertedOrderId));
                 }
+                SetDataGrid();
+                OnBackButtonClick(new object(), new RoutedEventArgs());
             }
-            SetDataGrid();
-            OnBackButtonClick(new object(), new RoutedEventArgs());
         }
 
         private String GetNextCode(String documentType)

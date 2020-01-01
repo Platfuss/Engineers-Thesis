@@ -258,7 +258,7 @@ namespace EngineersThesis
             bool areThereOlderDocuments = Convert.ToInt32(sqlHandler.ExecuteCommand(SqlSelectCommands.AreThereOlderDocuments(pickedDate)).Tables[0].Rows[0][0]) > 0;
             if (areThereOlderDocuments == true)
             {
-                MessageBox.Show("Błąd! Istnieją już starsze dokumenty!");
+                MessageBox.Show("Błąd! Istnieją już nowsze dokumenty!");
                 return;
             }
 
@@ -345,45 +345,6 @@ namespace EngineersThesis
                                     }
                                 }
                             }
-
-                            //foreach (var component in componentsInNeed)
-                            //{
-                            //    sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId, component.Key, (-component.Value).ToString()));
-                            //}
-
-                            //sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrder(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
-                            //    warehouseId, documentType, "1", date));
-                            //String insertedOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
-
-                            //foreach (DataRowView row in dataGrid.Items)
-                            //{
-                            //    if (complexProductsId.Contains(row[0].ToString()))
-                            //    {
-                            //        bool isProductInWarehouse = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(
-                            //            SqlSelectCommands.CheckIfProductIdIsInWarehouse(warehouseId, row[0].ToString()))).Count == 0;
-
-                            //        if (isProductInWarehouse)
-                            //        {
-                            //            sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertProductToWarehouse(warehouseId, row[0].ToString(),
-                            //                row[lastColumnIndex].ToString()));
-                            //        }
-                            //        else
-                            //        {
-                            //            if (complexProductsToComplete.ContainsKey(row[0].ToString()))
-                            //            {
-                            //                sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId,
-                            //                    row[0].ToString(), complexProductsToComplete[row[0].ToString()].ToString()));
-                            //            }
-                            //        }
-                            //        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, insertedOrderId.ToString(),
-                            //            row[0].ToString(), row[lastColumnIndex].ToString()));
-                            //    }
-                            //    else
-                            //    {
-                            //        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, insertedOrderId.ToString(),
-                            //             row[0].ToString(), row[lastColumnIndex].ToString()));
-                            //    }
-                            //}
                             Close();
                         }
                     }
@@ -398,54 +359,102 @@ namespace EngineersThesis
 
                         if (canProductsBeMoved)
                         {
-                            //foreach (var component in componentsInNeed)
-                            //{
-                            //    sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId, component.Key, (-component.Value).ToString()));
-                            //}
+                            String strategy = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.GetSetting("1")))[0][0];
 
-                            //sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderForMM(sqlHandler.Database, nextCode, warehouseId, 
-                            //    contractorIndexToID[contractorComboBox.SelectedIndex], documentType +"-", "1", date));
-                            //String moveOutOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
+                            var warehouseData = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehousesForGivenField("name", warehouseName)))[0];
+                            String warehouseShort = warehouseData[1];
+                            String localWarehouseId = warehouseData[0];
+                            nextCode = "";
+                            var dateFormatSetting = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.GetSetting("2")))[0][0];
+                            String localDate = $@"{Convert.ToDateTime(datePicker.Text).Year}.{Convert.ToDateTime(datePicker.Text).Month}.{Convert.ToDateTime(datePicker.Text).Day}";
+                            var list = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastDocumentNumber(date, warehouseId, documentType + "-", dateFormatSetting)));
+                            int number = 0;
+                            if (list[0][0] != null && list[0][0] != "")
+                                number = Convert.ToInt32(list[0][0].ToString());
 
-                            //nextCode = GetNextCode();
-                            //sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderForMM(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
-                            //    warehouseId, documentType+"+", "0", date));
-                            //String moveInOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
+                            String endingString = $@"/{Convert.ToDateTime(datePicker.Text).Year}/{documentType}/{warehouseShort}";
 
-                            //foreach (DataRowView row in dataGrid.Items)
-                            //{
-                            //    if (complexProductsId.Contains(row[0].ToString()))
-                            //    {
-                            //        bool isProductInWarehouse = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(
-                            //            SqlSelectCommands.CheckIfProductIdIsInWarehouse(warehouseId, row[0].ToString()))).Count == 0;
+                            if (dateFormatSetting == "0")
+                            {
+                                nextCode = (++number).ToString() + @"/" + Convert.ToDateTime(datePicker.Text).Month;
+                            }
+                            else
+                            {
+                                nextCode = (++number).ToString();
+                            }
+                            nextCode += endingString;
 
-                            //        if (isProductInWarehouse)
-                            //        {
-                            //            sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertProductToWarehouse(warehouseId, row[0].ToString(),
-                            //                row[lastColumnIndex].ToString()));
-                            //        }
-                            //        else
-                            //        {
-                            //            if (complexProductsToComplete.ContainsKey(row[0].ToString()))
-                            //            {
-                            //                sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateProductToWarehouse(warehouseId,
-                            //                    row[0].ToString(), row[lastColumnIndex].ToString()));
-                            //            }
-                            //        }
+                            sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderForMM(sqlHandler.Database, nextCode, warehouseId,
+                                contractorIndexToID[contractorComboBox.SelectedIndex], documentType + "-", "1", date));
+                            String moveOutOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
 
-                            //        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveOutOrderId.ToString(),
-                            //            row[0].ToString(), row[lastColumnIndex].ToString()));
-                            //        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveInOrderId.ToString(),
-                            //            row[0].ToString(), row[lastColumnIndex].ToString()));
-                            //    }
-                            //    else
-                            //    {
-                            //        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveOutOrderId.ToString(),
-                            //             row[0].ToString(), row[lastColumnIndex].ToString()));
-                            //        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveInOrderId.ToString(),
-                            //            row[0].ToString(), row[lastColumnIndex].ToString()));
-                            //    }
-                            //}
+
+                            warehouseData = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowWarehousesForGivenField("id", contractorIndexToID[contractorComboBox.SelectedIndex])))[0];
+                            warehouseShort = warehouseData[1];
+                            localWarehouseId = warehouseData[0];
+                            nextCode = "";
+                            dateFormatSetting = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.GetSetting("2")))[0][0];
+                            localDate = $@"{Convert.ToDateTime(datePicker.Text).Year}.{Convert.ToDateTime(datePicker.Text).Month}.{Convert.ToDateTime(datePicker.Text).Day}";
+                            list = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastDocumentNumber(date, contractorIndexToID[contractorComboBox.SelectedIndex], documentType + "+", dateFormatSetting)));
+                            number = 0;
+                            if (list[0][0] != null && list[0][0] != "")
+                                number = Convert.ToInt32(list[0][0].ToString());
+
+                            endingString = $@"/{Convert.ToDateTime(datePicker.Text).Year}/{documentType}/{warehouseShort}";
+
+                            if (dateFormatSetting == "0")
+                            {
+                                nextCode = (++number).ToString() + @"/" + Convert.ToDateTime(datePicker.Text).Month;
+                            }
+                            else
+                            {
+                                nextCode = (++number).ToString();
+                            }
+                            nextCode += endingString;
+
+
+                            sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderForMM(sqlHandler.Database, nextCode, contractorIndexToID[contractorComboBox.SelectedIndex],
+                                warehouseId, documentType + "+", "0", date));
+                            String moveInOrderId = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "orders")))[0][0];
+
+                            foreach (var toMove in productsToMove)
+                            {
+                                var result = sqlHandler.ExecuteCommand(SqlSelectCommands.GetProductFromOrders(toMove.Key, warehouseId, strategy)).Tables[0];
+
+                                double toDelete = toMove.Value;
+                                for (int i = 0; toDelete > 0; i++)
+                                {
+                                    double availableWare = Convert.ToDouble(result.Rows[i].ItemArray[1].ToString());
+                                    double difference = availableWare - toDelete;
+
+                                    var columns = result.Rows[i].ItemArray;
+                                    String buyOrderId = columns[0].ToString();
+                                    String price = columns[2].ToString();
+
+                                    if (difference >= 0)
+                                    {
+                                        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertDetailsForOutOrders(moveOutOrderId, buyOrderId, toMove.Key,
+                                            toDelete.ToString(), price));
+
+                                        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveInOrderId, toMove.Key, toDelete.ToString(), price));
+
+                                        sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateLeftovers(buyOrderId, toMove.Key, difference.ToString()));
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertDetailsForOutOrders(moveOutOrderId, buyOrderId, toMove.Key,
+                                            availableWare.ToString(), price));
+
+                                        sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertOrderDetails(sqlHandler.Database, moveInOrderId, toMove.Key, toDelete.ToString(), price));
+
+                                        sqlHandler.ExecuteNonQuery(SqlUpdateCommands.UpdateLeftovers(buyOrderId, toMove.Key, "0"));
+
+                                        toDelete = -difference;
+                                        continue;
+                                    }
+                                }
+                            }
                             Close();
                         }
                     }

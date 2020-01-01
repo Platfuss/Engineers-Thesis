@@ -26,17 +26,23 @@ namespace EngineersThesis
         private SqlHandler sqlHandler;
         private Action setOwnerGrid;
         private bool editMode;
-        private bool wasComplex;
+        private bool isComplex = false;
         private DataRowView givenEditedRow;
 
-        public ProductEditorControl(SqlHandler handler, Action setGrid, bool enabled)
+        public ProductEditorControl(SqlHandler handler, Action setGrid, bool enabled, bool _isComplex)
         {
             InitializeComponent();
             sqlHandler = handler;
             setOwnerGrid = setGrid;
-            nameTextBox.IsEnabled = buyNetTextBox.IsEnabled = taxComboBox.IsEnabled = unitComboBox.IsEnabled
-                = normalProductRadioButton.IsEnabled = complexProductRadioButton.IsEnabled = AcceptButton.IsEnabled
+            nameTextBox.IsEnabled = buyNetTextBox.IsEnabled = taxComboBox.IsEnabled = unitComboBox.IsEnabled = AcceptButton.IsEnabled
                 = buyGrossTextBox.IsEnabled = sellGrossTextBox.IsEnabled = sellNetTextBox.IsEnabled = enabled;
+
+            isComplex = _isComplex;
+
+            if (isComplex)
+            {
+                tabComponent.Visibility = Visibility.Visible;
+            }
         }
 
         public ProductEditorControl(SqlHandler handler, Action setGrid, DataRowView data)
@@ -46,19 +52,17 @@ namespace EngineersThesis
             setOwnerGrid = setGrid;
             givenEditedRow = data;
             editMode = true;
-            wasComplex = false;
 
             var list = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowComplexProductsID(sqlHandler.Database)));
             foreach (var node in list)
             {
                 if (node[0] == givenEditedRow[0].ToString())
-                    wasComplex = true;
+                    isComplex = true;
             }
 
-            if (wasComplex)
+            if (isComplex)
             {
-                complexProductRadioButton.IsChecked = tabComponent.IsEnabled = true;
-                normalProductRadioButton.IsChecked = false;
+                tabComponent.Visibility = Visibility.Visible;
             }
         }
 
@@ -164,18 +168,6 @@ namespace EngineersThesis
             e.Handled = !Regex.IsMatch(textBox.Text + e.Text, @"^\d*\,?\d{0,3}$");
         }
 
-        private void NormalProductChecked(object sender, RoutedEventArgs e)
-        {
-            complexProductRadioButton.IsChecked = false;
-            tabComponent.IsEnabled = false;
-        }
-
-        private void ComplexProductChecked(object sender, RoutedEventArgs e)
-        {
-            normalProductRadioButton.IsChecked = false;
-            tabComponent.IsEnabled = true;
-        }
-
         private void OnTaxChanged(object sender, SelectionChangedEventArgs e)
         {
             ChangeLinkedTextBoxesValue(buyNetTextBox, buyGrossTextBox, true);
@@ -233,13 +225,8 @@ namespace EngineersThesis
                 {
                     String productId = givenEditedRow[0].ToString();
 
-                    if (wasComplex == false && !(bool)complexProductRadioButton.IsChecked)
+                    if (isComplex == false)
                     {
-                        sqlHandler.ExecuteCommand(SqlUpdateCommands.UpdateProductInfo(sqlHandler.Database, givenEditedRow[0].ToString(), nameTextBox.Text, unitText, priceBuy, priceSell, taxComboBoxText));
-                    }
-                    else if (wasComplex == true && !(bool)complexProductRadioButton.IsChecked)
-                    {
-                        sqlHandler.ExecuteNonQuery(SqlDeleteCommands.DeleteComplexity(sqlHandler.Database, givenEditedRow[0].ToString()));
                         sqlHandler.ExecuteCommand(SqlUpdateCommands.UpdateProductInfo(sqlHandler.Database, givenEditedRow[0].ToString(), nameTextBox.Text, unitText, priceBuy, priceSell, taxComboBoxText));
                     }
                     else
@@ -266,6 +253,7 @@ namespace EngineersThesis
                                 bool added = sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertNewProduct(sqlHandler.Database, nameTextBox.Text, unitText, priceBuy, priceSell, taxComboBoxText));
                                 if (added)
                                 {
+                                    ClearWindow();
                                     var result = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "products")));
                                     var lastId = result[0][0];
                                     if (lastId != "" && lastId != null)
@@ -281,7 +269,7 @@ namespace EngineersThesis
                 }
                 else
                 {
-                    if ( !(bool)complexProductRadioButton.IsChecked)
+                    if (isComplex == false)
                     {
                         sqlHandler.ExecuteCommand(SqlInsertCommands.InsertNewProduct(sqlHandler.Database, nameTextBox.Text, unitText, priceBuy, priceSell, taxComboBoxText));
                     }
@@ -294,6 +282,7 @@ namespace EngineersThesis
                             bool added = sqlHandler.ExecuteNonQuery(SqlInsertCommands.InsertNewProduct(sqlHandler.Database, nameTextBox.Text, unitText, priceBuy, priceSell, taxComboBoxText));
                             if (added)
                             {
+                                ClearWindow();
                                 var result = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowLastInsertedID(sqlHandler.Database, "products")));
                                 var lastId = result[0][0];
                                 if (lastId != "" && lastId != null)
@@ -312,6 +301,13 @@ namespace EngineersThesis
             {
                 MessageBox.Show("Nie wszystkie pola zostały wypełnione!");
             }
+        }
+
+        private void ClearWindow()
+        {
+            OnClearComponents(new object(), new RoutedEventArgs());
+            nameTextBox.Text = buyNetTextBox.Text = sellNetTextBox.Text = buyGrossTextBox.Text = sellGrossTextBox.Text = "";
+            unitComboBox.SelectedIndex = -1;
         }
 
         private bool DataGridDataToList(ref List<Tuple<String, String>> list)

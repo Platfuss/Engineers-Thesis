@@ -101,6 +101,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ProductEditorHost.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Production.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ProductEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -110,6 +118,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ProductsOnDocuments.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RecipeManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -143,6 +155,12 @@
     <Compile Include="DocumentEditor.xaml.cs">
       <DependentUpon>DocumentEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ProductEditorHost.xaml.cs">
+      <DependentUpon>ProductEditorHost.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Production.xaml.cs">
+      <DependentUpon>Production.xaml</DependentUpon>
+    </Compile>
     <Compile Include="General\SqlCommands.cs" />
     <Compile Include="General\SqlConstants.cs" />
     <Compile Include="General\SqlCreateTableCommands.cs" />
@@ -160,6 +178,9 @@
     </Compile>
     <Compile Include="ProductsOnDocuments.xaml.cs">
       <DependentUpon>ProductsOnDocuments.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RecipeManager.xaml.cs">
+      <DependentUpon>RecipeManager.xaml</DependentUpon>
     </Compile>
     <Compile Include="Statistics.xaml.cs">
       <DependentUpon>Statistics.xaml</DependentUpon>

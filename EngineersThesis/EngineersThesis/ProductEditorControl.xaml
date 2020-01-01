@@ -34,18 +34,9 @@
                     <Label Content="Sugerowane ceny" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="4" FontWeight="Bold" FontSize="12"/>
                     <Label Content="Cena zakupu netto" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="5" VerticalContentAlignment="Center" Height="26" Width="114" />
                     <Label Content="Cena sprzedaży netto" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="7" VerticalContentAlignment="Center" Height="26" />
-                    <Label Content="Rodzaj produktu" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="0" VerticalContentAlignment="Center" Height="26" Width="114" />
                     <TextBox x:Name="nameTextBox" HorizontalAlignment="Right" Height="24" TextWrapping="Wrap" VerticalAlignment="Center" Width="150" Grid.Column="0" Grid.Row="1" Margin="0,5,20,5"/>
                     <TextBox x:Name="buyNetTextBox" HorizontalAlignment="Right" Height="24" TextWrapping="Wrap" VerticalAlignment="Center" Width="150" Grid.Column="0" Grid.Row="6" Margin="0,5,20,4" PreviewTextInput="OnNetValidation" LostFocus="OnBuyNetTextChanged"/>
                     <TextBox x:Name="sellNetTextBox" HorizontalAlignment="Right" Height="24" TextWrapping="Wrap" VerticalAlignment="Center" Width="150" Grid.Column="0" Grid.Row="8" Margin="0,4,20,5" PreviewTextInput="OnNetValidation" LostFocus="OnSellNetTextChanged"/>
-                    <Grid Grid.Column="1" Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <RadioButton x:Name="normalProductRadioButton" Content="Zwykły" HorizontalAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center" IsChecked="True" Click="NormalProductChecked" />
-                        <RadioButton x:Name="complexProductRadioButton" Grid.Column="1" Content="Złożony" HorizontalAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center" Click="ComplexProductChecked" />
-                    </Grid>
                     <Label Content="Jednostka" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Width="122" VerticalContentAlignment="Center" Height="26"/>
                     <ComboBox x:Name="unitComboBox" HorizontalAlignment="Right" Height="22" VerticalAlignment="Center" Width="150" Grid.Column="0" Grid.Row="3" Margin="0,6,20,6">
                         <ComboBoxItem Content="szt."/>
@@ -80,7 +71,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem x:Name="tabComponent" Header="Składniki" IsEnabled="False" Selector.Selected="OnComponentTabSelected">
+            <TabItem x:Name="tabComponent" Header="Składniki" Selector.Selected="OnComponentTabSelected" Visibility="Hidden">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="9*"/>

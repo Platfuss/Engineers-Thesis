@@ -29,17 +29,17 @@ namespace EngineersThesis
             InitializeComponent();
             sqlHandler = handler;
             Action setDataGrid = SetDataGrid;
-            editProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, false);
-            newProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, true);
+            editProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, false, false);
+            newProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, true, false);
         }
 
         private void SetDataGrid()
         {
-            editProductFrame.Content = new ProductEditorControl(sqlHandler, SetDataGrid, false);
+            editProductFrame.Content = new ProductEditorControl(sqlHandler, SetDataGrid, false, false);
             var database = sqlHandler.Database;
             if (database != null)
             {
-                var dataSet = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProductsWithFollowingEmpty(sqlHandler.Database, "complex"));
+                var dataSet = sqlHandler.ExecuteCommand(SqlSelectCommands.ShowProducts(sqlHandler.Database));
                 dataGrid.ItemsSource = dataSet.Tables[0].DefaultView;
                 foreach (var column in dataGrid.Columns)
                 {
@@ -51,27 +51,6 @@ namespace EngineersThesis
                 {
                     dataGrid.Columns[0].Visibility = Visibility.Hidden;
                     dataGrid.Columns[dataGrid.Columns.Count - 1].Width = new DataGridLength(1, DataGridLengthUnitType.Star);
-                    var list = sqlHandler.DataSetToList(sqlHandler.ExecuteCommand(SqlSelectCommands.ShowComplexProductsID(sqlHandler.Database)));
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        foreach (DataRowView row in dataGrid.Items)
-                        {
-                            var lastColumnIndex = row.Row.Table.Columns.Count - 1;
-                            if (row[0].ToString() == list[i][0])
-                            {
-                                row[lastColumnIndex] = "Tak";
-                            }
-                        }
-                    }
-
-                    foreach (DataRowView row in dataGrid.Items)
-                    {
-                        var lastColumnIndex = row.Row.Table.Columns.Count - 1;
-                        if (row[lastColumnIndex].ToString() != "Tak")
-                        {
-                            row[lastColumnIndex] = "Nie";
-                        }
-                    }
                 }
             }
         }
@@ -108,8 +87,8 @@ namespace EngineersThesis
             {
                 sqlHandler.ExecuteNonQuery(SqlDeleteCommands.DeleteProduct(sqlHandler.Database, productId));
                 Action setDataGrid = SetDataGrid;
-                editProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, false);
-                newProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, true);
+                editProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, false, false);
+                newProductFrame.Content = new ProductEditorControl(sqlHandler, setDataGrid, true, false);
                 SetDataGrid();
             }
             else

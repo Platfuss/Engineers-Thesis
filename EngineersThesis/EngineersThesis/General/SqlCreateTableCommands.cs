@@ -78,7 +78,7 @@ namespace EngineersThesis.General
                 "POSTAL_CODE varchar(10)," +
                 "TAX_CODE varchar(15) UNIQUE" +
                 ");" +
-                "INSERT IGNORE contractors (ID, NAME) VALUES (-1, 'Operacja wewnętrzna');";
+                "INSERT IGNORE contractors (id, name, street, city, postal_code, tax_code) VALUES (-1, 'Operacja wewnętrzna', ' ', ' ', ' ', ' ');";
         }
 
         public static String OrdersTable()

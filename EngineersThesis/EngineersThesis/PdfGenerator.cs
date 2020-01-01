@@ -131,11 +131,27 @@ namespace EngineersThesis
                         var contractorPostalCode = sqlExecutionResult["postal_code"].ToString();
                         var contractorTaxCode = sqlExecutionResult["tax_code"].ToString();
 
-                        document.Add(FillPdfPTableRow($" ", $"Kontrahent: ", boldFont, italicFont));
-                        document.Add(FillPdfPTableRow($"{companyName}", $"{contractorName}", boldFont, boldFont));
+                        if (contractorName == "Operacja wewnętrzna")
+                        {
+                            document.Add(FillPdfPTableRow($" ", $" ", boldFont, italicFont));
+                            document.Add(FillPdfPTableRow($"{companyName}", $" ", boldFont, boldFont));
+                        }
+                        else
+                        {
+                            document.Add(FillPdfPTableRow($" ", $"Kontrahent: ", boldFont, italicFont));
+                            document.Add(FillPdfPTableRow($"{companyName}", $"{contractorName}", boldFont, boldFont));
+                        }
+                        
                         document.Add(FillPdfPTableRow($"{companyStreet}", $"{contractorStreet}", normalFont, normalFont));
                         document.Add(FillPdfPTableRow($"{companyPostalCode + " " + $"{companyCity}"}", $"{contractorPostalCode}" + " " + $"{contractorCity}", normalFont, normalFont));
-                        document.Add(FillPdfPTableRow($"NIP: {companyTaxCode}", $"NIP: {contractorTaxCode}", normalFont, normalFont));
+                        if (contractorName == "Operacja wewnętrzna")
+                        {
+                            document.Add(FillPdfPTableRow($"NIP: {companyTaxCode}", $"{contractorTaxCode}", normalFont, normalFont));
+                        }
+                        else
+                        {
+                            document.Add(FillPdfPTableRow($"NIP: {companyTaxCode}", $"NIP: {contractorTaxCode}", normalFont, normalFont));
+                        }
                     }
                     document.Add(GetNewLine());
                     document.Add(GetNewLine());

@@ -26,7 +26,9 @@
 
 		<DockPanel Grid.Row="2" Margin="10,0,10,0" LastChildFill="False" >
 			<Button x:Name="ManageProductsButton" IsEnabled="False" Content="Zarządzaj towarami" Click="OnManageProductButtonClick" MinWidth="120"/>
-			<Button x:Name="ProductsOnDocumentsButton" Content="Produkty na dokumentach" IsEnabled="False" Click="OnProductsOnDocumentsClick" MinWidth="120" DockPanel.Dock="Right" />
+            <Border BorderThickness="2"/>
+            <Button x:Name="ProductionButton" IsEnabled="False" Content="Produkcja" MinWidth="120" Click="OnProductionButtonClick"/>
+            <Button x:Name="ProductsOnDocumentsButton" Content="Produkty na dokumentach" IsEnabled="False" Click="OnProductsOnDocumentsClick" MinWidth="120" DockPanel.Dock="Right" />
 		</DockPanel>
 
 		<DockPanel Grid.Row="2" Grid.Column="1" Margin="10,0,10,0" LastChildFill="False" >
